@@ -1,5 +1,9 @@
 package tn.esprit.examenspring.entities;
 
+import lombok.Data;
+import lombok.Getter;
+
+@Getter
 public enum Emoji {
     THUMBS_UP("\uD83D\uDC4D"),
     SMILE("\uD83D\uDE04"),
