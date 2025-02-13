@@ -16,10 +16,10 @@ import java.util.Set;
 public class Assignment {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-public int id;
-public String title;
-public String description;
-public Date dueDate;
+    private Integer id;
+    private String title;
+    private String description;
+    private Date dueDate;
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Submission> submissions;
     @ManyToOne

@@ -16,11 +16,11 @@ import java.util.Set;
 public class Interview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public Date date;
-    public String status; //Pending, Passed, Failed
-    public int Score;
+    private Integer id;
+    private Date date;
+    private String status; //Pending, Passed, Failed
+    private Integer Score;
 
-    @ManyToMany(mappedBy="bs",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy="interviews",cascade = CascadeType.ALL)
     private Set<User> users;
 }

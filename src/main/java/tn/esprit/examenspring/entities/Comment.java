@@ -16,9 +16,9 @@ import java.util.Set;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String content;
-    public Date date;
+    private Integer id;
+    private String content;
+    private Date date;
 
 
 }

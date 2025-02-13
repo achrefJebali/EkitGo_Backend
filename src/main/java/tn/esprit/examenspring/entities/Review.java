@@ -1,6 +1,7 @@
 package tn.esprit.examenspring.entities;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 import java.util.Set;
@@ -15,9 +16,9 @@ import java.util.Set;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public  int id;
-    public int rating;
-    public String comment;
+    private Integer id;
+    private Integer rating;
+    private String comment;
 
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Formation> formations;

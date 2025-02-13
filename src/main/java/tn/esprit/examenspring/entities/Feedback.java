@@ -1,10 +1,7 @@
 package tn.esprit.examenspring.entities;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -17,10 +14,13 @@ import lombok.*;
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public int like;
-    public int dislike;
-    public int rating;
+    private Integer id;
+    @Column(name = "likes")
+    private Integer like;
+    @Column(name = "dislikes")
+    private Integer dislike;
+    @Column(name = "rating")
+    private Integer rating;
 
 
 }

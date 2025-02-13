@@ -15,10 +15,10 @@ import java.util.Set;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String name;
-    public String description;
-    public String picture;
+    private Integer id;
+    private String name;
+    private String description;
+    private String picture;
     @OneToMany(cascade= CascadeType.ALL, mappedBy="category")
     private Set<Formation> formations;
 }
