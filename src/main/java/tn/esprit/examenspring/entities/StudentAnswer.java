@@ -15,9 +15,9 @@ import java.sql.Time;
 public class StudentAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String Answer;
-    public Time AnswerTime;
+    private Integer id;
+    private String Answer;
+    private Time AnswerTime;
     @ManyToOne
     Question question;
 }

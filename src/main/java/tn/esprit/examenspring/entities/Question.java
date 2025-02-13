@@ -15,9 +15,9 @@ import java.util.Set;
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int idQuestion;
-    public Categorie categorie;
-    public String CorrectAnswer;
+    private Integer idQuestion;
+    private Categorie categorie;
+    private String CorrectAnswer;
     @ManyToOne
     Quiz quiz;
     /////REPONSEUSER///

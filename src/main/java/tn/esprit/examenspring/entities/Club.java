@@ -16,19 +16,19 @@ import java.util.Set;
 public class Club {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String name;
-    public String image;
-    public String description;
-    public String objectives;
-    public String theme;
-    public String email;
+    private Integer id;
+    private String name;
+    private String image;
+    private String description;
+    private String objectives;
+    private String theme;
+    private String email;
 
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Event> events;
 
-    @ManyToMany (mappedBy ="users", cascade = CascadeType.ALL)
+    @ManyToMany (mappedBy ="clubs", cascade = CascadeType.ALL)
     private Set<User> users;
 }

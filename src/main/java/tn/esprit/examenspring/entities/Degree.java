@@ -15,14 +15,14 @@ import java.util.Set;
 public class Degree {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String name;
-    public String description;
+    private Integer id;
+    private String name;
+    private String description;
     @Enumerated(EnumType.STRING)
-    public Categorie categorie;
-    public String level;
+    private Categorie categorie;
+    private String level;
 
-    @ManyToMany(mappedBy="Degree",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy="degrees",cascade = CascadeType.ALL)
     private Set<Grades> grades;
 
 }

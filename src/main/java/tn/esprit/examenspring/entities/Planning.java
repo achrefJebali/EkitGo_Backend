@@ -20,10 +20,10 @@ import java.util.Date;
 public class Planning {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public Date eventDate;
-    public LocalTime starttime;
-    public LocalTime endtime;
-    public String description;
+    private Integer id;
+    private Date eventDate;
+    private LocalTime starttime;
+    private LocalTime endtime;
+    private String description;
 
 }
