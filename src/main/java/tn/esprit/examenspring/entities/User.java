@@ -16,23 +16,22 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String name;
-    public String username;
-    public String password;
-    public String email;
-    public String phone;
-    public String address;
-    public String photo;
-    public String status;
-    public float balance;
-    public String Token;
-    public Boolean isPaid;
-    public int weeklyInterviews;
+    private Integer id;
+    private String name;
+    private String username;
+    private String password;
+    private String email;
+    private String phone;
+    private String address;
+    private String photo;
+    private String status;
+    private Float balance;
 
     @Enumerated(EnumType.STRING)
-    public Role role;
-
+    private Role role;
+    private String Token;
+    private Boolean isPaid;
+    private Integer weeklyInterviews;
     ////////CLASSES/////
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Classes> classes;
@@ -62,12 +61,12 @@ public class User {
     private Set<Feedback> feedbacks;
     ////CHATROOM////
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<ChatRoom> chatRooms;
+    private Set<ChatRoom>  chatRooms;
     ////MESSAGE////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Message> messages;
     ////COMPLAINT////
-    @OneToMany(mappedBy="User",cascade= CascadeType.ALL)
+    @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
     private Set<Complaint>complaints;
     ////ComplaintResponse///
     @ManyToMany(cascade = CascadeType.ALL)

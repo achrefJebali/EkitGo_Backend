@@ -15,9 +15,9 @@ import java.util.Date;
 public class QuizScore {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int idScore;
-    public int score;
-    public Date date;
+    private Integer idScore;
+    private Integer score;
+    private Date date;
 
     @ManyToOne
     Quiz quiz;

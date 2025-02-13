@@ -18,9 +18,9 @@ import java.util.Date;
 public class ComplaintResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String responsetext;
-    public Date date;
+    private Integer id;
+    private String responsetext;
+    private Date date;
 
 
 }

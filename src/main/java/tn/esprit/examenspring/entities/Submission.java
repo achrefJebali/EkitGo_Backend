@@ -16,9 +16,9 @@ import java.util.Set;
 public class Submission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String file;
-    public Date submissionDate;
+    private Integer id;
+    private String file;
+    private Date submissionDate;
     @ManyToMany(mappedBy="submissions",cascade = CascadeType.ALL)
     private Set<Assignment> assignments;
 

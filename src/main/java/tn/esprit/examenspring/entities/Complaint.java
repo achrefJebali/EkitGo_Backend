@@ -16,10 +16,10 @@ import java.util.Date;
 public class Complaint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String description;
-    public Status status;
-    public Date submissiondate;
+    private Integer id;
+    private String description;
+    private Status status;
+    private Date submissiondate;
     @ManyToOne
     User user;
     @OneToOne

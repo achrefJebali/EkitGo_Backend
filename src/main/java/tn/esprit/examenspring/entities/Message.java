@@ -15,13 +15,13 @@ import java.util.Date;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public  int senderId;
-    public int receiverId;
-    public Date sentDate;
-    public Date receivedDate;
+    private Integer id;
+    private  Integer senderId;
+    private Integer receiverId;
+    private Date sentDate;
+    private Date receivedDate;
     @Enumerated(EnumType.STRING)
-    public MessageStatus messageStatus;
+    private MessageStatus messageStatus;
 
     @OneToOne
     private Reaction reaction;

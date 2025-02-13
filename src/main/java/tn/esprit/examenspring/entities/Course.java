@@ -15,10 +15,10 @@ import java.util.Set;
 public class Course {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-public int id;
-public String name;
-public String description;
-public int duration;
+    private Integer id;
+    private String name;
+    private String description;
+    private int duration;
     ///////ASSIGNMENT///////////
     @OneToMany(cascade= CascadeType.ALL, mappedBy="course")
     private Set<Assignment> assignments;

@@ -15,12 +15,13 @@ import java.util.Set;
 public class Classes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String section;
-    public int capacity;
+    private Integer id;
+    private String section;
+    private Integer capacity;
 
     @ManyToOne
     Schedule schedule;
+
     @OneToMany(cascade= CascadeType.ALL, mappedBy="classes")
     private Set<Course> courses;
     @ManyToOne

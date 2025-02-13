@@ -16,11 +16,12 @@ import java.util.Set;
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public  int id;
-    public String dayOfWeek;
-    public LocalTime startTime;
-    public LocalTime endTime;
-    @OneToMany(cascade= CascadeType.ALL, mappedBy="b")
+    private  Integer id;
+    private String dayOfWeek;
+    private LocalTime startTime;
+    private LocalTime endTime;
+
+    @OneToMany(cascade= CascadeType.ALL, mappedBy="schedule")
     private Set<Classes> classes;
 
 }

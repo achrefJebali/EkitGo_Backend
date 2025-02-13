@@ -16,10 +16,10 @@ import java.util.Set;
 public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String name;
+    private Integer id;
+    private String name;
 
-    @ManyToMany(mappedBy="users",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy="chatRooms",cascade = CascadeType.ALL)
     private Set<User>users;
 
     @OneToMany(cascade = CascadeType.ALL)
