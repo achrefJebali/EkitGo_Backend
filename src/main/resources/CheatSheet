@@ -1,0 +1,99 @@
+Associations:
+      uni:
+          OneToOne:
+             Projet=>ProjetDetail (Projet:
+                                          @OneToOne
+                                          private Projet_Detail projetDetail;)
+                                   ProjetDetail:
+                                   NOTHING)
+          OneToMany:
+             Entreprise=>Equipe (Entreprise:
+                                           @OneToMany(cascade = CascadeType.ALL)
+                                           private Set<Equipe> Equipes;)
+                                 Equipe:
+                                 NOTHING)
+          ManyToOne:
+             Equipe=>Entreprise (Equipe:
+                                        @ManyToOne(cascade = CascadeType.ALL)
+                                        Entreprise entreprise;
+                                 Entreprise:
+                                 NOTHING)
+          ManyToMany:
+             Equipe=>Projet     (Equipe:
+                                        @ManyToMany(cascade = CascadeType.ALL)
+                                        private Set<Projet> projets;
+                                 Projet:
+                                 NOTHING)
+      bi:
+                OneToOne:
+                   Projet=>ProjetDetail (Projet:
+                                                @OneToOne
+                                                private Projet_Detail projetDetail;)
+                                         ProjetDetail: (fils)
+                                                @OneToOne(mappedBy="projetDetail")
+                                                private Projet projet;)
+
+                ManyToOne=OneToMany
+                   Equipe=>Entreprise (Equipe:
+                                              @ManyToOne
+                                              Entreprise entreprise;
+                                       Entreprise:
+                                              @OneToMany(cascade = CascadeType.ALL, mappedBy="entreprise")
+                                              private Set<Equipe> Equipes;)
+                ManyToMany:
+                   Equipe=>Projet     (Equipe:
+                                              @ManyToMany(cascade = CascadeType.ALL)
+                                              private Set<Projet> projets;
+                                       Projet:
+                                              @ManyToMany(mappedBy="projets", cascade = CascadeType.ALL)
+                                              private Set<Equipe> equipes;)
+
+Scheduling:
+      @EnableScheduling f class main.(SpringApplication.run(...)
+
+       Pour planifier un déclenchement de méthode à une date fixe, nous pouvons
+       utiliser le paramètre fixedRate dans l'annotation @Scheduled.
+
+       exemple:    @Scheduled(fixedRate = 60000)   //60sec
+                   public void fixedRateMethod() {
+                   log.info("Method with fixed Rate");
+                   }
+
+       Pour fixer un délai fixe entre la dernière exécution et le début de l'exécution
+       suivante, nous pouvons utiliser le paramètre fixedDelay
+
+       exemple:    @Scheduled(fixedDelay = 60000)
+                   public void fixedDelayMethod() {
+                   log.info("Method with fixed delay");
+                   }
+
+
+       Cron:
+       exemple:   @Scheduled(cron = "*/60 * * * * *" )  //sec,min,h,j,m,joursemaine(sun=0)
+                  public void cronMethod() {
+                  log.info("Method with cron expression");
+                  }
+
+EXEMPLES SERVICES disponible:
+        boutique:
+         ajouter un centre et cree un boutique en meme temps
+         ajouter liste des boutiques et les affecter en un centre
+         afficher liste des clients d'une boutique donne
+         cree un service programme auto toutes les 30 sec affiche le nombre des client par genre
+         cree un Aspect qui permet de calculer et afficher dans les logs la duree d'execution de chaque methode appelee
+        assurance:
+         afficher le contrat le plus ancien d'un benificiaire donne
+         afficher montant annuel des assurances par beneficiaire
+         en utilisant scheduler proposer methode qui declenche toute les 60 sec et affiche nb assurances pour chaque beneficiaire ordonne par ordre decroissant
+         Créer un aspect permettant d’afficher le message « Bon courage ! » à la fin de l’exécution de chaque méthode du package services et qui commence par get.
+
+.
+
+
+
+
+
+
+
+
+
