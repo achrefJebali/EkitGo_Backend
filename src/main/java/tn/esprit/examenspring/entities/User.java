@@ -1,6 +1,5 @@
 package tn.esprit.examenspring.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class User {
     private Set <Comment>comments;
     /////ANNONCEMENT////
     @OneToMany(cascade = CascadeType.ALL)
-    private Set<Announcment> announcments;
+    private Set<Announcement> announcments;
     /////FEEDBACK/////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Feedback> feedbacks;
