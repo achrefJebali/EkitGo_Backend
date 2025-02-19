@@ -32,9 +32,18 @@ public class User {
     private String Token;
     private Boolean isPaid;
     private Integer weeklyInterviews;
+    private String Token;
+    private Boolean isPaid;
+    private Integer weeklyInterviews;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @JsonIgnore
     ////////CLASSES/////
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<Classes> classes;
+    @ManyToOne(cascade = CascadeType.ALL )
+    Classes classe;
     ////////CLUB////////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Club> clubs;
@@ -48,16 +57,16 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Notification> notifications;
     /////TRICHEDETECTION//////
-    @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
-    private Set<TricheDetection>tricheDetections;
+    @OneToOne(cascade= CascadeType.ALL)
+    private TricheDetection tricheDetections;
     ////COMMENT////
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set <Comment>comments;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Comment> comments;
     /////ANNONCEMENT////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Announcment> announcments;
     /////FEEDBACK/////
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Feedback> feedbacks;
     ////CHATROOM////
     @ManyToMany(cascade = CascadeType.ALL)
@@ -71,4 +80,11 @@ public class User {
     ////ComplaintResponse///
     @ManyToMany(cascade = CascadeType.ALL)
     private Set <ComplaintResponse>complaintResponses;
+    ////REVIEW/////////
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Review> reviews;
+    ////CONTRIBUTION/////////
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Contribution> contributions;
+
 }

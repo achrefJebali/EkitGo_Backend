@@ -26,6 +26,8 @@ public class Event {
     private Date date;
     private String registrationDeadline;
     private String category;
+    private Date eventDate;
+    private String registrationDeadline;
     //////PLANNING/////
     @OneToOne
     private Planning planning;

@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,19 +30,29 @@ public class Formation {
     private String highestRated;
     private String progression;
     /////REVIEW//////
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Review> reviews;
     /////CATEGORY//////
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Category category;
     /////RESSOURCE//////
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Ressource ressource;
     /////USER////
     @ManyToMany(mappedBy="formations",cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<User>users;
     ////QUIZ////
     @OneToOne
+    @ToString.Exclude
+    @JsonIgnore
     private Quiz quiz;
 
 }

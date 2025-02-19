@@ -1,6 +1,7 @@
 package tn.esprit.examenspring.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,9 @@ public class Complaint {
     private String description;
     private Status status;
     private Date submissiondate;
+
+    @JsonIgnore
+
     @ManyToOne
     User user;
     @OneToOne

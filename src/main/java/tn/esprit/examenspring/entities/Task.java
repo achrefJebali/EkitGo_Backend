@@ -1,9 +1,9 @@
 package tn.esprit.examenspring.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Time;
 import java.util.Set;
 
 @Entity
@@ -13,23 +13,21 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Club {
+public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String image;
     private String description;
-    private String objectives;
-    private String theme;
-    private String email;
+    private Time startTimeTask;
+    private Time endTimeTask;
 
+
+    @ManyToOne
+    Planning planning;
     @OneToMany(cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @JsonIgnore
-    private Set<Event> events;
+    private Set<Contribution> contributions;
 
-    @ManyToMany (mappedBy ="clubs", cascade = CascadeType.ALL)
-    private Set<User> users;
 
 }

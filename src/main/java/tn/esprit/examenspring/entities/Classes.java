@@ -24,6 +24,9 @@ public class Classes {
 
     @OneToMany(cascade= CascadeType.ALL, mappedBy="classes")
     private Set<Course> courses;
-    @ManyToOne
-    User user;
+    @ManyToMany(cascade= CascadeType.ALL, mappedBy="classes")
+    private Set<User> user;
+    @OneToMany (cascade= CascadeType.ALL, mappedBy="classe")
+    private Set<User> users;
+
 }
