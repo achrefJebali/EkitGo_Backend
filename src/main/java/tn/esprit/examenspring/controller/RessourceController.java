@@ -22,7 +22,7 @@ public class RessourceController {
     public Ressource addRessource(@RequestBody Ressource r) {
         return ressourceService.addRessource(r);
     }
-    @DeleteMapping("/remove-bloc/{ressource-id}")
+    @DeleteMapping("/remove-ressource/{ressource-id}")
     public void removeRessource(@PathVariable("ressource-id") Integer fid) {
         ressourceService.deleteRessource(fid);
     }

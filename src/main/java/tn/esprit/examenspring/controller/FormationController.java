@@ -24,13 +24,20 @@ public class FormationController {
     public Formation addFormation(@RequestBody Formation f) {
         return formationService.addFormation(f);
     }
-    @DeleteMapping("/remove-bloc/{formation-id}")
+    @DeleteMapping("/remove-formation/{formation-id}")
     public void removeFormation(@PathVariable("formation-id") Integer fid) {
         formationService.deleteFormation(fid);
     }
     @PutMapping("/modify-formation")
     public Formation modifyFormation(@RequestBody Formation f) {
         return formationService.modifyFormation(f);
+    }
+
+    @PostMapping("/{idFormation}/affecter-category")
+    public Formation affecterCategoryAFormation(
+            @PathVariable Integer idFormation, // ID de la Formation (passé dans l'URL)
+            @RequestParam String categoryName) { // Nom de la Category (passé en paramètre de requête)
+        return formationService.affecterCategoryAFormationByName(idFormation, categoryName);
     }
 
 
