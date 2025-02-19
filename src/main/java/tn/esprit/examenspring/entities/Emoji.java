@@ -1,6 +1,6 @@
 package tn.esprit.examenspring.entities;
 
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 

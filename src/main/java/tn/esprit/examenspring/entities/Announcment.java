@@ -28,6 +28,11 @@ public class Announcment {
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Comment> comments;
+
+    ////USER////
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set <User>users;
+
 }
 
 
