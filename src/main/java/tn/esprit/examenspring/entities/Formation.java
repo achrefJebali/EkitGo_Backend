@@ -29,7 +29,7 @@ public class Formation {
     private String highestRated;
     private String progression;
     /////REVIEW//////
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Review> reviews;
     /////CATEGORY//////
     @ManyToOne
