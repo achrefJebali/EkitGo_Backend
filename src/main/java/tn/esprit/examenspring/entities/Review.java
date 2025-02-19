@@ -20,6 +20,4 @@ public class Review {
     private Integer rating;
     private String comment;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set<Formation> formations;
 }

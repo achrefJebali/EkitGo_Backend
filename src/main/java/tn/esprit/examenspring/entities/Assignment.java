@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,8 @@ public class Assignment {
     private Date dueDate;
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Submission> submissions;
+    @JsonIgnore
+
     @ManyToOne
     Course course;
 }

@@ -32,7 +32,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
+    @JsonIgnore
     ////////CLASSES/////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Classes> classes;
@@ -51,16 +51,16 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Notification> notifications;
     /////TRICHEDETECTION//////
-    @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
-    private Set<TricheDetection>tricheDetections;
+    @OneToOne(cascade= CascadeType.ALL)
+    private TricheDetection tricheDetections;
     ////COMMENT////
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set <Comment>comments;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Comment> comments;
     /////ANNONCEMENT////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Announcment> announcments;
     /////FEEDBACK/////
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Feedback> feedbacks;
     ////CHATROOM////
     @ManyToMany(cascade = CascadeType.ALL)
@@ -74,4 +74,11 @@ public class User {
     ////ComplaintResponse///
     @ManyToMany(cascade = CascadeType.ALL)
     private Set <ComplaintResponse>complaintResponses;
+    ////REVIEW/////////
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Review> reviews;
+    ////CONTRIBUTION/////////
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Contribution> contributions;
+
 }
