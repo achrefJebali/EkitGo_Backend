@@ -26,15 +26,18 @@ public class User {
     private String photo;
     private String status;
     private Float balance;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
     private String Token;
     private Boolean isPaid;
     private Integer weeklyInterviews;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+
     ////////CLASSES/////
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<Classes> classes;
+    @ManyToOne(cascade = CascadeType.ALL )
+    Classes classe;
     ////////CLUB////////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Club> clubs;

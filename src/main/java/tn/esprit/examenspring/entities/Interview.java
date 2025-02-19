@@ -18,8 +18,11 @@ public class Interview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Date date;
+    private String meeting_link;
     private String status; //Pending, Passed, Failed
     private Integer Score;
+    private Integer extraBonus;
+
 
     @ManyToMany(mappedBy="interviews",cascade = CascadeType.ALL)
     private Set<User> users;
