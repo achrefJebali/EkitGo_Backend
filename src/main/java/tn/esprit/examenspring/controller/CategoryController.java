@@ -21,7 +21,7 @@ public class CategoryController {
     public Category addCategory(@RequestBody Category c) {
         return categoryService.addCategory(c);
     }
-    @DeleteMapping("/remove-bloc/{category-id}")
+    @DeleteMapping("/remove-category/{category-id}")
     public void removeCategory(@PathVariable("category-id") Integer fid) {
         categoryService.deleteCategory(fid);
     }
@@ -29,6 +29,9 @@ public class CategoryController {
     public Category modifyCategory(@RequestBody Category c) {
         return categoryService.modifyCategory(c);
     }
+
+    @GetMapping("/retrieve-by-name/{name}")
+    public Category getCategoryByname(@PathVariable String name){ return  categoryService.getcategorybyname(name);}
 
 
 }
