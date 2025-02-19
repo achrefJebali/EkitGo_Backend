@@ -32,11 +32,8 @@ public class User {
     private String Token;
     private Boolean isPaid;
     private Integer weeklyInterviews;
-    private String Token;
-    private Boolean isPaid;
-    private Integer weeklyInterviews;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+
+
 
     @JsonIgnore
     ////////CLASSES/////

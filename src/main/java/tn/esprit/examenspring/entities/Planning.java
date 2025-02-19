@@ -27,9 +27,6 @@ public class Planning {
     private LocalTime starttime;
     private LocalTime endtime;
     private String description;
-    private LocalTime starttime;
-    private LocalTime endTime;
-    private String description;
 
     @OneToOne (mappedBy="planning")
     private Event event;

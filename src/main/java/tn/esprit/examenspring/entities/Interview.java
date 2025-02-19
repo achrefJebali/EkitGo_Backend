@@ -20,10 +20,7 @@ public class Interview {
     private Date date;
     private String status; //Pending, Passed, Failed
     private Integer Score;
-
     private String meeting_link;
-    private String status; //Pending, Passed, Failed
-    private Integer Score;
     private Integer extraBonus;
 
 
