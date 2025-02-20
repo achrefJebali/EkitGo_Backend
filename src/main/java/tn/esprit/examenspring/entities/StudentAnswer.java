@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Time;
+import java.util.Set;
 
 @Entity
 @Data
@@ -20,4 +21,12 @@ public class StudentAnswer {
     private Time AnswerTime;
     @ManyToOne
     Question question;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="studentanswer")
+    private Set<TricheDetection> TricheDetection;
+
+
+
+
+
+
 }

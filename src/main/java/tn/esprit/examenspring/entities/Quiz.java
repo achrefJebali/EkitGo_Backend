@@ -15,12 +15,13 @@ import java.util.Set;
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idQuiz;
+    private Integer quiz_id;
     private String title;
     private String description;
     private Float duration;
     private Integer nbrquestions;
-    private String categorie ;
+    private String categories ;
+
     /////QUESTION//////
     @OneToMany(cascade= CascadeType.ALL, mappedBy="quiz")
     private Set<Question> questions ;

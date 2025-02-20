@@ -23,4 +23,6 @@ public class TricheDetection {
     ////USER////
     @ManyToOne
     User user;
+    @ManyToOne
+    StudentAnswer studentanswer;
 }
