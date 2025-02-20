@@ -15,21 +15,21 @@ import java.util.Set;
 public class Formation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String image;
-    public String title;
-    public String description;
-    public String video;
-    public String label;
-    public String duration;
-    public String certificate;
-    public float price;
-    public int discount;
-    public String featured;
-    public String highestRated;
-    public String progression;
+    private Integer id;
+    private String image;
+    private String title;
+    private String description;
+    private String video;
+    private String label;
+    private String duration;
+    private String certificate;
+    private Float price;
+    private Integer discount;
+    private String featured;
+    private String highestRated;
+    private String progression;
     /////REVIEW//////
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Review> reviews;
     /////CATEGORY//////
     @ManyToOne

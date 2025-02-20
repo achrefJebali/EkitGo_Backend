@@ -15,20 +15,20 @@ import java.util.Set;
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int idQuiz;
-    public String title;
-    public String description;
-    public float duration;
-    public int nbrquestions;
-    public String categorie ;
+    private Integer idQuiz;
+    private String title;
+    private String description;
+    private Float duration;
+    private Integer nbrquestions;
+    private String categorie ;
     /////QUESTION//////
     @OneToMany(cascade= CascadeType.ALL, mappedBy="quiz")
     private Set<Question> questions ;
     /////QUIZSCORE//////
-    @OneToMany(mappedBy="b",cascade= CascadeType.ALL)
+    @OneToMany(mappedBy="quiz",cascade= CascadeType.ALL)
     private Set<QuizScore>quizScores;
     /////TRICHEDETECTION//////
-    @OneToMany(mappedBy="b",cascade= CascadeType.ALL)
+    @OneToMany(mappedBy="quiz",cascade= CascadeType.ALL)
     private Set<TricheDetection>tricheDetections;
 
 }

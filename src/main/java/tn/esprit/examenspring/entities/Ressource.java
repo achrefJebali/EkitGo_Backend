@@ -16,11 +16,11 @@ import java.util.Set;
 public class Ressource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String type;
-    public String title;
-    public String fileUrl;
-    public String description;
+    private Integer id;
+    private String type;
+    private String title;
+    private String fileUrl;
+    private String description;
     @OneToMany(cascade= CascadeType.ALL, mappedBy="ressource")
     private Set<Formation> formations;
 

@@ -14,9 +14,9 @@ import java.util.Date;
 public class TricheDetection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public Date date;
-    public String details;
+    private Integer id;
+    private Date date;
+    private String details;
     ////QUIZ////
     @ManyToOne
     Quiz quiz;

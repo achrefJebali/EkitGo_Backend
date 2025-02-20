@@ -16,11 +16,11 @@ import java.util.Set;
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String message;
-    public Date date;
-    public String status;
+    private Integer id;
+    private String message;
+    private Date date;
+    private String status;
     @Enumerated(EnumType.STRING)
-    public Type type;
-    public String titre;
+    private Type type;
+    private String titre;
 }

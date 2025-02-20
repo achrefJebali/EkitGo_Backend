@@ -6,9 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
+import jakarta.persistence.*;
 
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Data
@@ -20,10 +22,15 @@ import java.util.Date;
 public class Planning {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public Date eventDate;
-    public LocalTime starttime;
-    public LocalTime endtime;
-    public String description;
+    private Integer id;
+    private LocalTime starttime;
+    private LocalTime endTime;
+    private String description;
+
+    @OneToOne (mappedBy="planning")
+    private Event event;
+
+    @OneToMany(mappedBy="planning",cascade= CascadeType.ALL)
+    private Set<Task> tasks;
 
 }

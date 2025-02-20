@@ -16,18 +16,23 @@ import java.util.Set;
 public class Announcment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String posttitle;
-    public String postslug;
-    public String postimage;
-    public String postdesc;
-    public Date creatdate;
+    private Integer id;
+    private String posttitle;
+    private String postslug;
+    private String postimage;
+    private String postdesc;
+    private Date creatdate;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Feedback> feedbacks;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Comment> comments;
+
+    ////USER////
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set <User>users;
+
 }
 
 

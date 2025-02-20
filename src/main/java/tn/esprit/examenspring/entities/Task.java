@@ -1,9 +1,9 @@
 package tn.esprit.examenspring.entities;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Time;
 import java.util.Set;
 
 @Entity
@@ -13,15 +13,21 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Chatroom {
+public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+    private String description;
+    private Time startTimeTask;
+    private Time endTimeTask;
 
-    @ManyToMany(mappedBy="chatRooms",cascade = CascadeType.ALL)
-    private Set<User>users;
 
+    @ManyToOne
+    Planning planning;
     @OneToMany(cascade = CascadeType.ALL)
-    private Set<Message> messages;
+    private Set<Contribution> contributions;
+
+
 }

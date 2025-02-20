@@ -17,18 +17,10 @@ public class Contribution {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    private String solutionDescription;
-    private String uploadFile;
-
-    @Temporal(TemporalType.DATE)
-    private Date date;
-    private String status ;
-    /////////USER////////
-    @ToString.Exclude
-    @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
-    User user;
+    private String Description;
+    private String result ;
+    private String progression ;
 
 }

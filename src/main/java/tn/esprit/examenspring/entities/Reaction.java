@@ -16,13 +16,8 @@ public class Reaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "message_id")
-    public Message message;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    public User user;
-
+    @Enumerated(EnumType.STRING)
     public Emoji emoji;
+    public Date date;
+
 }

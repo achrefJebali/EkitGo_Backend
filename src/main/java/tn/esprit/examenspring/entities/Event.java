@@ -19,13 +19,12 @@ import java.util.Set;
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-    public String name;
-    public String description;
-    public String image;
-    public Date date;
-    public String registrationDeadline;
-    public String category;
+    private Integer id;
+    private String name;
+    private String description;
+    private String image;
+    private Date eventDate;
+    private String registrationDeadline;
     //////PLANNING/////
     @OneToOne
     private Planning planning;
