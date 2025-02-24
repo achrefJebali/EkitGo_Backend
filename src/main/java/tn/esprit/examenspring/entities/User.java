@@ -66,7 +66,7 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Message> messages;
     ////COMPLAINT////
-    @OneToMany(mappedBy="User",cascade= CascadeType.ALL)
+    @OneToMany(cascade= CascadeType.ALL)
     private Set<Complaint>complaints;
     ////ComplaintResponse///
     @ManyToMany(cascade = CascadeType.ALL)

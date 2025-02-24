@@ -20,7 +20,7 @@ public class Schedule {
     public String dayOfWeek;
     public LocalTime startTime;
     public LocalTime endTime;
-    @OneToMany(cascade= CascadeType.ALL, mappedBy="b")
+    @OneToMany(cascade= CascadeType.ALL, mappedBy="schedule")
     private Set<Classes> classes;
 
 }

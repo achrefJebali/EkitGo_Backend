@@ -29,6 +29,6 @@ public class Club {
     @JsonIgnore
     private Set<Event> events;
 
-    @ManyToMany (mappedBy ="users", cascade = CascadeType.ALL)
+    @ManyToMany (mappedBy ="clubs", cascade = CascadeType.ALL)
     private Set<User> users;
 }

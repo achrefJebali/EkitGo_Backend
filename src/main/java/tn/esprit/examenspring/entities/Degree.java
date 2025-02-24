@@ -22,7 +22,7 @@ public class Degree {
     public Categorie categorie;
     public String level;
 
-    @ManyToMany(mappedBy="Degree",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy="degrees",cascade = CascadeType.ALL)
     private Set<Grades> grades;
 
 }

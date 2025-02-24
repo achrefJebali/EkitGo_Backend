@@ -19,7 +19,7 @@ public class Chatroom {
     public int id;
     public String name;
 
-    @ManyToMany(mappedBy="users",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy="chatrooms",cascade = CascadeType.ALL)
     private Set<User>users;
 
     @OneToMany(cascade = CascadeType.ALL)

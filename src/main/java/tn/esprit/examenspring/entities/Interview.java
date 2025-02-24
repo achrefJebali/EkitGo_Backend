@@ -21,6 +21,6 @@ public class Interview {
     public String status; //Pending, Passed, Failed
     public int Score;
 
-    @ManyToMany(mappedBy="bs",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy="interviews",cascade = CascadeType.ALL)
     private Set<User> users;
 }

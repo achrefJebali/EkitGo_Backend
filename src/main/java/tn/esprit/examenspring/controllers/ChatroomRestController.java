@@ -6,7 +6,8 @@ import tn.esprit.examenspring.exceptions.ResourceNotFoundException;
 import tn.esprit.examenspring.services.IChatroomService;
 
 import java.util.List;
-
+@RestController
+@RequestMapping("/Chatroom")
 public class ChatroomRestController {
 
     private final IChatroomService chatroomService;
@@ -15,7 +16,7 @@ public class ChatroomRestController {
         this.chatroomService = chatroomService;
     }
 
-    @GetMapping
+    @GetMapping("/retrieve-all-chatrooms")
     public List<Chatroom> getAllChatrooms() {
         return chatroomService.findAll();
     }
@@ -25,12 +26,12 @@ public class ChatroomRestController {
         return chatroomService.findById(id);
 
     }
-    @PostMapping
+    @PostMapping("/add-chatroom")
     public Chatroom createChatroom(@RequestBody Chatroom chatroom) {
         return chatroomService.save(chatroom);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/modify-chatroom")
     public Chatroom updateChatroom(@PathVariable Long id, @RequestBody Chatroom updatedChatroom) {
         Chatroom existingChatroom = chatroomService.findById(id);
 
