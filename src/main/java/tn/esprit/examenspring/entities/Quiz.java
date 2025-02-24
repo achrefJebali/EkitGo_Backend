@@ -25,10 +25,10 @@ public class Quiz {
     @OneToMany(cascade= CascadeType.ALL, mappedBy="quiz")
     private Set<Question> questions ;
     /////QUIZSCORE//////
-    @OneToMany(mappedBy="b",cascade= CascadeType.ALL)
+    @OneToMany(mappedBy="quiz",cascade= CascadeType.ALL)
     private Set<QuizScore>quizScores;
     /////TRICHEDETECTION//////
-    @OneToMany(mappedBy="b",cascade= CascadeType.ALL)
+    @OneToMany(mappedBy="quiz",cascade= CascadeType.ALL)
     private Set<TricheDetection>tricheDetections;
 
 }

@@ -23,5 +23,5 @@ public class Complaint {
     @ManyToOne
     User user;
     @OneToOne
-    private ComplaintResponse complaintResponse;
+    public ComplaintResponse complaintResponse;
 }
