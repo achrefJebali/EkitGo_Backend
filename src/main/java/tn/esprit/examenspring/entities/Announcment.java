@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,8 @@ public class Announcment {
     private String postimage;
     private String postdesc;
     private Date creatdate;
+    @JsonIgnore
+
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Feedback> feedbacks;

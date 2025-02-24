@@ -34,11 +34,11 @@ public class User {
     public Role role;
 
     ////////CLASSES/////
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private Set<Classes> classes;
+ //   @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    //private Set<Classes> classes;
     ////////CLUB////////
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set<Club> clubs;
+ //   @ManyToMany(cascade = CascadeType.ALL)
+   // private Set<Club> clubs;
     ///////FORMATION////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Formation> formations;
@@ -49,8 +49,8 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Notification> notifications;
     /////TRICHEDETECTION//////
-    @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
-    private Set<TricheDetection>tricheDetections;
+  //  @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
+  //  private Set<TricheDetection>tricheDetections;
     ////COMMENT////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set <Comment>comments;

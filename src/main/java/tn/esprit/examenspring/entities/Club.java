@@ -29,4 +29,5 @@ public class Club {
     @JsonIgnore
     private Set<Event> events;
 
+
 }

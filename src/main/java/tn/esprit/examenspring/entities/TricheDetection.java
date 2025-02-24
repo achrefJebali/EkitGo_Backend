@@ -21,6 +21,6 @@ public class TricheDetection {
     @ManyToOne
     Quiz quiz;
     ////USER////
-    @ManyToOne
+    @OneToOne(mappedBy = "tricheDetections")
     User user;
 }

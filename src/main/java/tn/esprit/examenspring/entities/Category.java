@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,5 +21,7 @@ public class Category {
     private String description;
     private String picture;
     @OneToMany(cascade= CascadeType.ALL, mappedBy="category")
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Formation> formations;
 }

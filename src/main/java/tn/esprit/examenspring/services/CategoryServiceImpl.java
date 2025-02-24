@@ -36,4 +36,10 @@ public class CategoryServiceImpl implements ICategoryService{
 
 
     }
+
+    @Override
+    public Category getcategorybyname(String name) {
+        Category category =categoryRepository.findCategoriesByname(name);
+        return category;
+    }
 }
