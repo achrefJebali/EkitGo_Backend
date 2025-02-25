@@ -1,9 +1,9 @@
 package tn.esprit.examenspring.services;
 
 import org.springframework.stereotype.Service;
-import tn.esprit.examenspring.Repository.ChatroomRepository;
 import tn.esprit.examenspring.entities.Chatroom;
 import tn.esprit.examenspring.exceptions.ResourceNotFoundException;
+import tn.esprit.examenspring.Repository.ChatroomRepository;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class ChatroomServiceImpl implements IChatroomService{
     }
 
     @Override
-    public Chatroom findById(Long id) {
+    public Chatroom findById(int id) {
         return chatroomRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ChatRoom not found with id " + id));
     }
@@ -31,7 +31,7 @@ public class ChatroomServiceImpl implements IChatroomService{
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(int id) {
         chatroomRepository.deleteById(id);
     }
 

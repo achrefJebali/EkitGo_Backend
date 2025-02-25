@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface IChatroomService {
     List<Chatroom> findAll();
-    Chatroom findById(Long id);
-    Chatroom save(Chatroom chatRoom);
-    void deleteById(Long id);}
+    Chatroom findById(int id);
+    Chatroom save(Chatroom chatroom);
+    void deleteById(int id);}

@@ -2,15 +2,17 @@ package tn.esprit.examenspring.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.examenspring.entities.Chatroom;
+import tn.esprit.examenspring.entities.Complaint;
 import tn.esprit.examenspring.exceptions.ResourceNotFoundException;
 import tn.esprit.examenspring.services.IChatroomService;
+import tn.esprit.examenspring.services.IComplaintService;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/Chatroom")
 public class ChatroomRestController {
-
-    private final IChatroomService chatroomService;
+    public IChatroomService chatroomService;
 
     public ChatroomRestController(IChatroomService chatroomService) {
         this.chatroomService = chatroomService;
@@ -22,7 +24,7 @@ public class ChatroomRestController {
     }
 
     @GetMapping("/{id}")
-    public Chatroom getChatroomById(@PathVariable Long id) {
+    public Chatroom getChatroomById(@PathVariable int id) {
         return chatroomService.findById(id);
 
     }
@@ -31,15 +33,15 @@ public class ChatroomRestController {
         return chatroomService.save(chatroom);
     }
 
-    @PutMapping("/modify-chatroom")
-    public Chatroom updateChatroom(@PathVariable Long id, @RequestBody Chatroom updatedChatroom) {
+    @PutMapping("/modify-complaint")
+    public Chatroom updateChatroom(@PathVariable int id, @RequestBody Chatroom updatedChatroom) {
         Chatroom existingChatroom = chatroomService.findById(id);
 
         existingChatroom.setName(updatedChatroom.getName());
         return chatroomService.save(existingChatroom);
     }
     @DeleteMapping("/{id}")
-    public void deleteChatroom(@PathVariable Long id) {
+    public void deleteChatroom(@PathVariable int id) {
         chatroomService.deleteById(id);
     }
 }
