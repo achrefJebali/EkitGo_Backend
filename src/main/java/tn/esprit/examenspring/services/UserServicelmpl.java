@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import tn.esprit.examenspring.Repository.UserRepository;
+import tn.esprit.examenspring.dto.PasswordChangeRequest;
 import tn.esprit.examenspring.entities.User;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -45,5 +47,32 @@ public class UserServicelmpl implements IUserService{
 
 
     }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+
+
+    }
+
+    // ✅ Implementing the password change logic
+    public boolean changePassword(String username, String currentPassword, String newPassword) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            // Verify current password
+            if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                throw new RuntimeException("Current password is incorrect.");
+            }
+
+            // Encode and update password
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return true;
+        }
+        throw new RuntimeException("User not found.");
+    }
+
+
 
 }

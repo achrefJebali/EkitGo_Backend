@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.examenspring.dto.AuthResponse;
 import tn.esprit.examenspring.dto.LoginRequest;
+import tn.esprit.examenspring.entities.User;
+import tn.esprit.examenspring.services.UserServicelmpl;
 import tn.esprit.examenspring.utils.*;
 
 @RestController
@@ -37,4 +39,6 @@ public class AuthController {
 
         return ResponseEntity.ok(new AuthResponse(jwt));
     }
+
+
 }

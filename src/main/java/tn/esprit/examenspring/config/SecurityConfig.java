@@ -46,6 +46,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/User/add-user",
+                                "/User/get-user/**",
+                                "/User/remove-user/**",
+                                "/User/retrieve-all-users",
+                                "/User/modify-user",
+                                "/User/change-password/**",
                                 "/swagger-ui/**",        // ✅ Autoriser l'interface Swagger
                                 "/v3/api-docs/**",       // ✅ Autoriser les endpoints de documentation
                                 "/swagger-resources/**", // ✅ Autoriser les ressources Swagger

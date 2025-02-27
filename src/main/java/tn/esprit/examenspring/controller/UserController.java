@@ -5,18 +5,13 @@ import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.examenspring.dto.AuthResponse;
-import tn.esprit.examenspring.dto.LoginRequest;
-import tn.esprit.examenspring.entities.Ressource;
+import tn.esprit.examenspring.dto.ChangePasswordDTO;
 import tn.esprit.examenspring.entities.User;
-import tn.esprit.examenspring.services.IRessourceService;
 import tn.esprit.examenspring.services.IUserService;
 
-import java.util.List;
+import java.util.*;
+
 @RestController
 @RequestMapping("/User")
 public class UserController {
@@ -39,7 +34,6 @@ public class UserController {
         }
     }
 
-
     @DeleteMapping("/remove-user/{user-id}")
     public void removeUser(@PathVariable("user-id") Integer fid) {
         userService.deleteUser(fid);
@@ -48,5 +42,24 @@ public class UserController {
     public User modifyUser(@RequestBody User r) {
         return userService.modifyUser(r);
     }
+    @GetMapping("/get-user/{username}")
+    public Optional<User> getUserByUsername(@PathVariable String username) {
+        return userService.findByUsername(username);
+    }
+    @PutMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordDTO dto) {
+        boolean isChanged = userService.changePassword(dto.getUsername(), dto.getCurrentPassword(), dto.getNewPassword());
+
+        if (isChanged) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Password updated successfully!");
+            return ResponseEntity.ok(response); // ✅ Returns JSON instead of plain text
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Incorrect current password"));
+        }
+    }
+
+
 
 }
