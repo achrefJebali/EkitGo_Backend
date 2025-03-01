@@ -1,6 +1,7 @@
 package tn.esprit.examenspring.controller;
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.examenspring.entities.Formation;
@@ -10,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/Formation")
-
 public class FormationController {
     @Autowired
     private IFormationService formationService;
@@ -24,15 +24,18 @@ public class FormationController {
     public Formation addFormation(@RequestBody Formation f) {
         return formationService.addFormation(f);
     }
-    @DeleteMapping("/remove-formation/{formation-id}")
+    @DeleteMapping("/delete-formation/{formation-id}")
     public void removeFormation(@PathVariable("formation-id") Integer fid) {
         formationService.deleteFormation(fid);
     }
-    @PutMapping("/modify-formation")
-    public Formation modifyFormation(@RequestBody Formation f) {
-        return formationService.modifyFormation(f);
+    @PutMapping("/update-formation/{id}")
+    public Formation modifyFormation(@PathVariable int id, @RequestBody Formation formation) {
+        return formationService.modifyFormation(id,formation);
     }
-
+    @GetMapping("/retrieve-formation/{id}")
+    public Formation getFormationById(@PathVariable("id") Integer Formationid) {
+        return formationService.retrieveFormation(Formationid);
+    }
     @PostMapping("/{idFormation}/affecter-category")
     public Formation affecterCategoryAFormation(
             @PathVariable Integer idFormation, // ID de la Formation (passé dans l'URL)

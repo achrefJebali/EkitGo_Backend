@@ -1,6 +1,7 @@
 package tn.esprit.examenspring.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +21,12 @@ public class ChatRoom {
     private String name;
 
     @ManyToMany(mappedBy="chatRooms",cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<User>users;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Message> messages;
 }

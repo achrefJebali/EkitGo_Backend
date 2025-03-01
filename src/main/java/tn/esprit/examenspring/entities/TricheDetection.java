@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,12 @@ public class TricheDetection {
     private String details;
     ////QUIZ////
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Quiz quiz;
     ////USER////
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     User user;
 }

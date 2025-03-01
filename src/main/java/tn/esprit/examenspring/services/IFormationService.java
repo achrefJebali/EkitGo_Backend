@@ -9,7 +9,9 @@ public interface IFormationService {
 
 Formation addFormation(Formation formation);
     List<Formation> getFormations();
-    Formation modifyFormation(Formation formation);
+    Formation modifyFormation(Integer id,Formation formation);
     void deleteFormation(Integer id);
     Formation affecterCategoryAFormationByName(Integer idFormation, String categoryName);
+    Formation retrieveFormation(Integer idFormation);
+
 }

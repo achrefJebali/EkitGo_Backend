@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/Category")
-public class CategoryController {
+public class    CategoryController {
     @Autowired
     private ICategoryService categoryService;
 

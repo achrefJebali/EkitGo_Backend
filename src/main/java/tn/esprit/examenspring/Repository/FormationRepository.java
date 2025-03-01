@@ -7,5 +7,4 @@ import tn.esprit.examenspring.entities.Formation;
 
 @Repository
 public interface FormationRepository extends JpaRepository <Formation,Integer>  {
-
 }

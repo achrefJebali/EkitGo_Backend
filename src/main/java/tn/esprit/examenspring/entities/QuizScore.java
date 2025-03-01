@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +21,12 @@ public class QuizScore {
     private Date date;
 
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Quiz quiz;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     Grades grades;
 }
