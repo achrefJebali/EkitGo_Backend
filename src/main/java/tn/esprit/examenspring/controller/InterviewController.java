@@ -3,10 +3,7 @@ package tn.esprit.examenspring.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.examenspring.entities.Interview;
-import tn.esprit.examenspring.entities.Ressource;
-import tn.esprit.examenspring.entities.User;
 import tn.esprit.examenspring.services.IInterviewService;
-import tn.esprit.examenspring.services.IRessourceService;
 
 import java.util.List;
 

@@ -4,9 +4,13 @@ import jakarta.validation.Valid;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.examenspring.dto.ChangePasswordDTO;
+import tn.esprit.examenspring.dto.UpdateRoleDTO;
+import tn.esprit.examenspring.entities.Role;
 import tn.esprit.examenspring.entities.User;
 import tn.esprit.examenspring.services.IUserService;
 
@@ -59,6 +63,54 @@ public class UserController {
                     .body(Collections.singletonMap("error", "Incorrect current password"));
         }
     }
+
+
+    @GetMapping("/check-email/{email}")
+    public boolean checkEmailExists(@PathVariable String email) {
+        return userService.existsByEmail(email);
+    }
+
+    @GetMapping("/check-username/{username}")
+    public boolean checkUsernameExists(@PathVariable String username) {
+        return userService.existsByUsername(username);
+    }
+
+    // ✅ GET: Retrieve all students
+    @GetMapping("/students")
+    public ResponseEntity<List<User>> getStudents() {
+        return ResponseEntity.ok(userService.getUsersByRole(Role.STUDENT));
+    }
+
+    // ✅ GET: Retrieve all teachers
+    @GetMapping("/teachers")
+    public ResponseEntity<List<User>> getTeachers() {
+        return ResponseEntity.ok(userService.getUsersByRole(Role.TEACHER));
+    }
+
+    // ✅ PUT: Update user role
+    @PutMapping("/update-role/{id}")
+    public ResponseEntity<?> updateUserRole(@PathVariable Integer id, @RequestBody UpdateRoleDTO updateRoleDTO) {
+        try {
+            User updatedUser = userService.updateUserRole(id, updateRoleDTO.getRole());
+            return ResponseEntity.ok(updatedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Internal Server Error"));
+        }
+    }
+
+    @PostMapping(value= "/{id}/upload-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadUserPhoto(@PathVariable Integer id, @RequestParam("photo") MultipartFile file) {
+        try {
+            String photoUrl = userService.uploadUserPhoto(id, file);
+            return ResponseEntity.ok(Collections.singletonMap("photoUrl", photoUrl));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", e.getMessage()));
+        }
+    }
+
 
 
 

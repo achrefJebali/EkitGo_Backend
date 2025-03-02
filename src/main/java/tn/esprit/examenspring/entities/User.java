@@ -26,7 +26,6 @@ public class User {
     private String photo;
     private String status;
     private Float balance;
-
     @Enumerated(EnumType.STRING)
     private Role role;
     private String Token;

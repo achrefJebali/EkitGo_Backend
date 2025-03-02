@@ -51,6 +51,16 @@ public class SecurityConfig {
                                 "/User/retrieve-all-users",
                                 "/User/modify-user",
                                 "/User/change-password/**",
+                                "/User/check-email/**",
+                                "/User/check-username/**",
+                                "/User/students",
+                                "/User/teachers",
+                                "/User/update-role/**",
+                                "/User/{id}/upload-photo",
+                                "/Interview/add-interview",
+                                "/Interview/retrieve-all-interviews",
+                                "/Interview/remove-interview/**",
+                                "/Interview/modify-interview",
                                 "/swagger-ui/**",        // ✅ Autoriser l'interface Swagger
                                 "/v3/api-docs/**",       // ✅ Autoriser les endpoints de documentation
                                 "/swagger-resources/**", // ✅ Autoriser les ressources Swagger

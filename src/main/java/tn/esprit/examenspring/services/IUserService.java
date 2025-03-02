@@ -1,5 +1,7 @@
 package tn.esprit.examenspring.services;
 
+import org.springframework.web.multipart.MultipartFile;
+import tn.esprit.examenspring.entities.Role;
 import tn.esprit.examenspring.entities.User;
 
 import java.util.List;
@@ -12,6 +14,14 @@ public interface IUserService {
     void deleteUser(Integer id);
     Optional<User> findByUsername(String username);
     boolean changePassword(String username, String currentPassword, String newPassword);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    List<User> getUsersByRole(Role role);
+    User updateUserRole(Integer Id, Role role);
+    String uploadUserPhoto(Integer Id, MultipartFile file);
+
+
+
 
 
 }
