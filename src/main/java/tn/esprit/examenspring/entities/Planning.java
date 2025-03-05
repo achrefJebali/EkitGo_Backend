@@ -1,6 +1,7 @@
 package tn.esprit.examenspring.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,9 +29,13 @@ public class Planning {
     private String description;
 
     @OneToOne (mappedBy="planning")
+    @ToString.Exclude
+    @JsonIgnore
     private Event event;
 
     @OneToMany(mappedBy="planning",cascade= CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Task> tasks;
 
 }

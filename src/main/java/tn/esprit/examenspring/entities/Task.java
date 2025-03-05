@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,8 +26,12 @@ public class Task {
 
 
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Planning planning;
     @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Contribution> contributions;
 
 

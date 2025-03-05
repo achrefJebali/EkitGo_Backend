@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.*;
@@ -22,6 +23,8 @@ public class Ressource {
     private String fileUrl;
     private String description;
     @OneToMany(cascade= CascadeType.ALL, mappedBy="ressource")
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Formation> formations;
 
 

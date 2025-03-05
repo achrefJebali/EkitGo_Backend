@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,8 @@ public class Reaction {
     private Date date;
 
     @OneToOne (mappedBy="reaction")
+    @ToString.Exclude
+    @JsonIgnore
     private Message message;
 
 }

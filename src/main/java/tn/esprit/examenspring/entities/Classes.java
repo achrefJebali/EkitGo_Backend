@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,10 +21,16 @@ public class Classes {
     private Integer capacity;
 
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Schedule schedule;
 
     @OneToMany(cascade= CascadeType.ALL, mappedBy="classes")
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Course> courses;
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     User user;
 }

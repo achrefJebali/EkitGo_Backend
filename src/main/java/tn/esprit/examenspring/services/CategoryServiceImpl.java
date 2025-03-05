@@ -33,13 +33,15 @@ public class CategoryServiceImpl implements ICategoryService{
     @Override
     public void deleteCategory(Integer id) {
         categoryRepository.deleteById(id);
-
-
+    }
+    @Override
+    public Category findByName(String name) {
+        return categoryRepository.findCategoriesByname(name);
     }
 
     @Override
-    public Category getcategorybyname(String name) {
-        Category category =categoryRepository.findCategoriesByname(name);
-        return category;
+    public Category saveCategory(Category category) {
+        return categoryRepository.save(category);
     }
+
 }

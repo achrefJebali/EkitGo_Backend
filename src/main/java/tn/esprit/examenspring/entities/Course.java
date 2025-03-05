@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,9 +22,13 @@ public class Course {
     private int duration;
     ///////ASSIGNMENT///////////
     @OneToMany(cascade= CascadeType.ALL, mappedBy="course")
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Assignment> assignments;
     //////CLASSES///////
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Classes classes;
 
 }

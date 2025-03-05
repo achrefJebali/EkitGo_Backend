@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,5 +23,7 @@ public class Interview {
     private Integer Score;
 
     @ManyToMany(mappedBy="interviews",cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<User> users;
 }

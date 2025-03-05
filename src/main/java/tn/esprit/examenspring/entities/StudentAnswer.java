@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,5 +20,7 @@ public class StudentAnswer {
     private String Answer;
     private Time AnswerTime;
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Question question;
 }

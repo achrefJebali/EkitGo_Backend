@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,5 +24,7 @@ public class Submission {
     private Set<Assignment> assignments;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     Submission submission;
 }

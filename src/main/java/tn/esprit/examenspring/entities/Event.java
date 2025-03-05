@@ -27,6 +27,8 @@ public class Event {
     private String registrationDeadline;
     //////PLANNING/////
     @OneToOne
+    @ToString.Exclude
+    @JsonIgnore
     private Planning planning;
     //////CONTRIBUTION//////
     @OneToMany(cascade = CascadeType.ALL)

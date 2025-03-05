@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +20,13 @@ public class Degree {
     private String name;
     private String description;
     @Enumerated(EnumType.STRING)
+
     private Categorie categorie;
     private String level;
 
     @ManyToMany(mappedBy="degrees",cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Grades> grades;
 
 }

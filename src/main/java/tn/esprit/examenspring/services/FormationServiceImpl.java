@@ -29,11 +29,27 @@ private FormationRepository formationRepository;
     public List<Formation> getFormations() {
         return formationRepository.findAll();
     }
-
+    public Optional<Formation> getFormationById(Integer id) {
+        return formationRepository.findById(id);
+    }
     @Override
-    public Formation modifyFormation(Formation formation) {
-         formationRepository.save(formation);
-        return formation;
+    public Formation modifyFormation(Integer idFormation, Formation formation) {
+        Formation existingFormation = formationRepository.findById(idFormation)
+                .orElseThrow(() -> new RuntimeException("Formation not found with id: " + idFormation));
+
+        existingFormation.setTitle(formation.getTitle());
+        existingFormation.setDescription(formation.getDescription());
+        existingFormation.setPrice(formation.getPrice());
+        existingFormation.setImage(formation.getImage());
+        existingFormation.setVideo(formation.getVideo());
+        existingFormation.setLabel(formation.getLabel());
+        existingFormation.setDuration(formation.getDuration());
+        existingFormation.setCertificate(formation.getCertificate());
+        existingFormation.setDiscount(formation.getDiscount());
+        existingFormation.setFeatured(formation.getFeatured());
+        existingFormation.setHighestRated(formation.getHighestRated());
+        existingFormation.setProgression(formation.getProgression());
+        return formationRepository.save(existingFormation);
     }
 
     @Override
@@ -42,6 +58,7 @@ private FormationRepository formationRepository;
 
 
     }
+
 
     @Override
     public Formation affecterCategoryAFormationByName(Integer id, String categoryName) {
@@ -59,4 +76,15 @@ private FormationRepository formationRepository;
         // Sauvegarder la Formation mise à jour
         return formationRepository.save(formation);
     }
+
+    @Override
+    public Formation retrieveFormation(Integer idFormation) {
+        log.info("Fetching formation with ID: {}", idFormation);
+        Formation formation = formationRepository.findByIdWithCategory(idFormation)
+                .orElseThrow(() -> new IllegalArgumentException("Formation with ID " + idFormation + " not found"));
+        log.info("Fetched formation with category: {}", formation.getCategory());
+        return formation;
+    }
+
+
 }

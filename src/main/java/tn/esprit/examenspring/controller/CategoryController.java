@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/Category")
-public class CategoryController {
+public class    CategoryController {
     @Autowired
     private ICategoryService categoryService;
 
@@ -31,7 +31,7 @@ public class CategoryController {
     }
 
     @GetMapping("/retrieve-by-name/{name}")
-    public Category getCategoryByname(@PathVariable String name){ return  categoryService.getcategorybyname(name);}
+    public Category getCategoryByname(@PathVariable String name){ return  categoryService.findByName(name);}
 
 
 }

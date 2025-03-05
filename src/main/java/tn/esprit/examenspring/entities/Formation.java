@@ -26,8 +26,8 @@ public class Formation {
     private String certificate;
     private Float price;
     private Integer discount;
-    private String featured;
-    private String highestRated;
+    private Boolean featured;
+    private Boolean highestRated;
     private String progression;
     /////REVIEW//////
     @OneToMany(cascade = CascadeType.ALL)
@@ -35,10 +35,13 @@ public class Formation {
     @JsonIgnore
     private Set<Review> reviews;
     /////CATEGORY//////
-    @ManyToOne
+    @Getter
+    @Setter
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     @JsonIgnore
     Category category;
+
     /////RESSOURCE//////
     @ManyToOne
     @ToString.Exclude
