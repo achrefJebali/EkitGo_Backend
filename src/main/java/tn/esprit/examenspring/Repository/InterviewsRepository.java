@@ -10,9 +10,9 @@ import java.util.List;
 
 @Repository
 public interface InterviewsRepository extends JpaRepository<Interview,Integer> {
-//    @Query("SELECT i FROM Interview i JOIN i.users u WHERE u.role = 'STUDENT'")
-//    List<Interview> findStudentInterviews();
-//    @Query("SELECT i FROM Interview i JOIN i.users u WHERE u.role = 'TEACHER'")
-//    List<Interview> findTeacherInterviews();
+    @Query("SELECT i FROM Interview i WHERE i.student.id = :studentId")
+    List<Interview> findByStudentId(Integer studentId);
 
+    @Query("SELECT i FROM Interview i WHERE i.teacher.id = :teacherId")
+    List<Interview> findByTeacherId(Integer teacherId);
 }

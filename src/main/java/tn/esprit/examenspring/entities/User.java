@@ -38,41 +38,71 @@ public class User {
     ////////CLASSES/////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Classes> classes;
+    
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL )
     Classes classe;
+    
+    @JsonIgnore
     ////////CLUB////////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Club> clubs;
+    
+    @JsonIgnore
     ///////FORMATION////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Formation> formations;
+    
+    @JsonIgnore
     ///////INTERVIEWS////
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set<Interview> interviews;
+    @OneToMany(mappedBy = "student")
+    private Set<Interview> studentInterviews;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "teacher")
+    private Set<Interview> teacherInterviews;
+
+    @JsonIgnore
     /////NOTIFICATION////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Notification> notifications;
+    
+    @JsonIgnore
     /////TRICHEDETECTION//////
     @OneToOne(cascade= CascadeType.ALL)
     private TricheDetection tricheDetections;
+    
+    @JsonIgnore
     ////COMMENT////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Comment> comments;
+    
+    @JsonIgnore
     /////ANNONCEMENT////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Announcment> announcments;
+    
+    @JsonIgnore
     /////FEEDBACK/////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Feedback> feedbacks;
+    
+    @JsonIgnore
     ////CHATROOM////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<ChatRoom>  chatRooms;
+    
+    @JsonIgnore
     ////MESSAGE////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Message> messages;
+    
+    @JsonIgnore
     ////COMPLAINT////
     @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
     private Set<Complaint>complaints;
+    
+    @JsonIgnore
     ////ComplaintResponse///
     @ManyToMany(cascade = CascadeType.ALL)
     private Set <ComplaintResponse>complaintResponses;

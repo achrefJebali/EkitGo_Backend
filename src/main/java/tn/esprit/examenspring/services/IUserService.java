@@ -19,6 +19,9 @@ public interface IUserService {
     List<User> getUsersByRole(Role role);
     User updateUserRole(Integer Id, Role role);
     String uploadUserPhoto(Integer Id, MultipartFile file);
+    String getPhotoUrl(Integer id);
+    User retrieveUserById(Integer id);
+
 
 
 

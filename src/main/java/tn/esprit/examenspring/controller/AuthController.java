@@ -14,7 +14,7 @@ import tn.esprit.examenspring.services.UserServicelmpl;
 import tn.esprit.examenspring.utils.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("api/auth")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;

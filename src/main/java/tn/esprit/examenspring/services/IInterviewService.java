@@ -11,6 +11,7 @@ public interface IInterviewService {
     List<Interview> getInterviews();
     Interview modifyInterview(Interview interview);
     void deleteInterview(Integer id);
-//    List<Interview> getStudentInterviews();
-//    List<Interview> getTeacherInterviews();
+    Interview getInterviewById(Integer id);
+    List<Interview> getInterviewsByStudentId(Integer studentId);
+    List<Interview> getInterviewsByTeacherId(Integer teacherId);
 }

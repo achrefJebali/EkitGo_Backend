@@ -19,58 +19,34 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import tn.esprit.examenspring.services.CustomUserDetailsService;
 
 import java.util.List;
 
 @Configuration
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService;
-
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
-        this.customUserDetailsService = customUserDetailsService;
+    public SecurityConfig() {
+        // No dependencies needed for this simplified configuration
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // Disable CSRF protection for API endpoints
                 .csrf(csrf -> csrf.disable())
+                // Configure CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Allow all requests for development/debugging
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/auth/login",
-                                "/User/add-user",
-                                "/User/get-user/**",
-                                "/User/remove-user/**",
-                                "/User/retrieve-all-users",
-                                "/User/modify-user",
-                                "/User/change-password/**",
-                                "/User/check-email/**",
-                                "/User/check-username/**",
-                                "/User/students",
-                                "/User/teachers",
-                                "/User/update-role/**",
-                                "/User/{id}/upload-photo",
-                                "/Interview/add-interview",
-                                "/Interview/retrieve-all-interviews",
-                                "/Interview/remove-interview/**",
-                                "/Interview/modify-interview",
-                                "/swagger-ui/**",        // ✅ Autoriser l'interface Swagger
-                                "/v3/api-docs/**",       // ✅ Autoriser les endpoints de documentation
-                                "/swagger-resources/**", // ✅ Autoriser les ressources Swagger
-                                "/webjars/**"            // ✅ Nécessaire pour Swagger
-                        ).permitAll()
-                        .anyRequest().authenticated() // JWT requis pour le reste
-                )
-                .userDetailsService(customUserDetailsService);
-
-
+                    .requestMatchers("/**").permitAll()
+                    .anyRequest().permitAll())
+                // Don't use sessions for REST API
+                .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                
         return http.build();
     }
 
@@ -79,8 +55,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Allow frontend origins
+        configuration.setAllowedOrigins(List.of(
+            "http://localhost:4200",
+            "http://localhost:8085",
+            "http://127.0.0.1:4200"
+        ));
+        // Allow all common HTTP methods
+        configuration.setAllowedMethods(List.of(
+            "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"
+        ));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 

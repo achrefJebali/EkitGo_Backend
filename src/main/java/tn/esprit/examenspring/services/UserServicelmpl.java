@@ -49,6 +49,8 @@ public class UserServicelmpl implements IUserService{
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload file", e);
         }
+
+
     }
 
 
@@ -132,7 +134,20 @@ public class UserServicelmpl implements IUserService{
         return user;
     }
 
+  @Override
+  public String getPhotoUrl(Integer id) {
+    Optional<User> userOpt = userRepository.findById(id);
+    if (userOpt.isPresent() && userOpt.get().getPhoto() != null) {
+      // Add the server URL and context path to the stored photo path
+      return "http://localhost:8085/ElitGo" + userOpt.get().getPhoto();
+    }
+    
+    // Return a default avatar if no photo is available
+    return "http://localhost:8085/ElitGo/assets/images/small-avatar-1.jpg";
+  }
 
-
-
+  @Override
+  public User retrieveUserById(Integer id) {
+    return userRepository.findById(id).orElse(null);
+  }
 }
