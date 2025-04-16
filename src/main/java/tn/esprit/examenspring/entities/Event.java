@@ -23,8 +23,10 @@ public class Event {
     private String name;
     private String description;
     private String image;
-    private Date eventDate;
+    private Date date;
     private String registrationDeadline;
+    private String category;
+    private Date eventDate;
     //////PLANNING/////
     @OneToOne
     private Planning planning;

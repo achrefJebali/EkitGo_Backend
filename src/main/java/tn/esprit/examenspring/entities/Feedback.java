@@ -19,6 +19,8 @@ public class Feedback {
     private Integer like;
     @Column(name = "dislikes")
     private Integer dislike;
+    @Column(name = "rating")
+    private Integer rating;
 
 
 

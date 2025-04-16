@@ -23,6 +23,7 @@ public class Announcment {
     private String postimage;
     private String postdesc;
     private Date creatdate;
+
     @JsonIgnore
 
 
