@@ -5,9 +5,13 @@ import tn.esprit.examenspring.entities.Quiz;
 import java.util.List;
 
 public interface IQuizService {
-    Quiz createQuiz(Quiz quiz);
-    Quiz updateQuiz(Integer id, Quiz quiz);
-    void deleteQuiz(Integer id);
-    Quiz getQuizById(Integer id);
+    Quiz addQuiz(Quiz quiz);
+    Quiz updateQuiz(Quiz quiz);
+    void deleteQuiz(Long id);
+
     List<Quiz> getAllQuizzes();
+
+
+
 }
+

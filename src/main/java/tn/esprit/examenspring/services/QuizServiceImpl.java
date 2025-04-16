@@ -2,53 +2,84 @@ package tn.esprit.examenspring.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import tn.esprit.examenspring.Repository.QuestionRepository;
 import tn.esprit.examenspring.Repository.QuizRepository;
+import tn.esprit.examenspring.entities.Question;
+import tn.esprit.examenspring.entities.QuestionDTO;
 import tn.esprit.examenspring.entities.Quiz;
+import tn.esprit.examenspring.entities.QuizDTO;
 
 import java.util.List;
-import java.util.Optional;
-@RestController
-@RequestMapping("/api/quizzes")
-@CrossOrigin(origins = "*")
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+public class QuizServiceImpl implements IQuizService {
 
-public class QuizServiceImpl implements IQuizService{
     @Autowired
     private QuizRepository quizRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Override
-    public Quiz createQuiz(Quiz quiz) {
+    public Quiz addQuiz(Quiz quiz) {
         return quizRepository.save(quiz);
     }
 
     @Override
-    public Quiz updateQuiz(Integer id, Quiz quiz) {
-        Optional<Quiz> existingQuiz = quizRepository.findById(id);
-        if (existingQuiz.isPresent()) {
-            Quiz updatedQuiz = existingQuiz.get();
-            updatedQuiz.setTitle(quiz.getTitle());
-            updatedQuiz.setDescription(quiz.getDescription());
-            updatedQuiz.setDuration(quiz.getDuration());
-            updatedQuiz.setNbrquestions(quiz.getNbrquestions());
-            updatedQuiz.setCategories(quiz.getCategories());
-            return quizRepository.save(updatedQuiz);
-        } else {
-            throw new RuntimeException("Quiz not found with id: " + id);
-        }
+    public Quiz updateQuiz(Quiz quiz) {
+        return quizRepository.save(quiz);
     }
 
+
     @Override
-    public void deleteQuiz(Integer id) {
+    public void deleteQuiz(Long id) {
         quizRepository.deleteById(id);
     }
 
-    @Override
-    public Quiz getQuizById(Integer id) {
-        return quizRepository.findById(id).orElseThrow(() -> new RuntimeException("Quiz not found with id: " + id));
+    public QuizDTO getQuizById(Long quizId) {
+        // Use a custom query to fetch the quiz with its questions
+        Quiz quiz = quizRepository.findByIdWithQuestions(quizId)
+                .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+        // Map the Quiz entity to QuizDTO
+        QuizDTO quizDTO = new QuizDTO();
+        quizDTO.setQuizId(quiz.getQuizId());
+        quizDTO.setTitle(quiz.getTitle());
+        quizDTO.setDescription(quiz.getDescription());
+        quizDTO.setDuration(quiz.getDuration());
+        quizDTO.setNbrquestions(quiz.getNbrquestions());
+        quizDTO.setCategories(quiz.getCategories());
+
+        // Map the Questions
+        Set<QuestionDTO> questionDTOs = quiz.getQuestions().stream()
+                .map(question -> new QuestionDTO(
+                        question.getImageUrl(),
+                        question.getQuestion_id(),
+                        question.getText(),
+                        question.getDifficulty(),
+                        question.getChoices(),
+                        question.getCorrectAnswer()))
+                .collect(Collectors.toSet());
+
+        quizDTO.setQuestions(questionDTOs);
+
+        return quizDTO;
+    }
+    public List<QuestionDTO> getQuestionsByQuizId(Long quizId) {
+        // Fetch all questions for the given quizId
+        List<Question> questions = questionRepository.findByQuizId(quizId);
+
+        // Map the Question entities to QuestionDTO
+        return questions.stream()
+                .map(question -> new QuestionDTO(
+                        question.getImageUrl(),
+                        question.getQuestion_id(),
+                        question.getText(),
+                        question.getDifficulty(),
+                        question.getChoices(),
+                        question.getCorrectAnswer()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -56,5 +87,3 @@ public class QuizServiceImpl implements IQuizService{
         return quizRepository.findAll();
     }
 }
-
-

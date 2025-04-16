@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+
 @Entity
 @Data
 @Getter
@@ -17,12 +18,14 @@ public class TricheDetection {
     private Integer id;
     private Date date;
     private String details;
-    ////QUIZ////
+
     @ManyToOne
-    Quiz quiz;
-    ////USER////
+    private Quiz quiz;
+
     @ManyToOne
-    User user;
+    private User user;
+
     @ManyToOne
-    StudentAnswer studentanswer;
+    @JoinColumn(name = "student_answer_id")
+    private StudentAnswer studentAnswer;
 }

@@ -1,42 +1,42 @@
 package tn.esprit.examenspring.controller;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.examenspring.entities.StudentAnswer;
 import tn.esprit.examenspring.services.IStudentAnswerService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/student-answers")
-@RequiredArgsConstructor
+@RequestMapping("/student-answers")
 public class StudentAnswerController {
 
-    private final IStudentAnswerService studentAnswerService;
+    @Autowired
+    private IStudentAnswerService studentAnswerService; // Updated to use IStudentAnswerService
 
-    @GetMapping
-    public List<StudentAnswer> getAllStudentAnswers() {
-        return studentAnswerService.getAllStudentAnswers();
-    }
-
-    @GetMapping("/{id}")
-    public Optional<StudentAnswer> getStudentAnswerById(@PathVariable Integer id) {
-        return studentAnswerService.getStudentAnswerById(id);
-    }
-
-    @PostMapping
-    public StudentAnswer addStudentAnswer(@RequestBody StudentAnswer studentAnswer) {
+    @PostMapping("/addQuiz")
+    public StudentAnswer addQuiz(@RequestBody StudentAnswer studentAnswer) {
         return studentAnswerService.addStudentAnswer(studentAnswer);
     }
 
-    @PutMapping("/{id}")
-    public StudentAnswer updateStudentAnswer(@PathVariable Integer id, @RequestBody StudentAnswer studentAnswer) {
-        return studentAnswerService.updateStudentAnswer(id, studentAnswer);
+
+    @PutMapping
+    public StudentAnswer updateStudentAnswer(@RequestBody StudentAnswer studentAnswer) {
+        return studentAnswerService.updateStudentAnswer(studentAnswer);
     }
 
     @DeleteMapping("/{id}")
     public void deleteStudentAnswer(@PathVariable Integer id) {
         studentAnswerService.deleteStudentAnswer(id);
+    }
+
+    @GetMapping("/{id}")
+    public StudentAnswer getStudentAnswerById(@PathVariable Integer id) {
+        return studentAnswerService.getStudentAnswerById(id);
+    }
+
+    @GetMapping
+    public List<StudentAnswer> getAllStudentAnswers() {
+        return studentAnswerService.getAllStudentAnswers();
     }
 }
