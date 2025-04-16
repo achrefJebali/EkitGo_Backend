@@ -15,12 +15,9 @@ import java.util.Date;
 public class Reaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    public int id;
     @Enumerated(EnumType.STRING)
-    private Emoji emoji;
-    private Date date;
-
-    @OneToOne (mappedBy="reaction")
-    private Message message;
+    public Emoji emoji;
+    public Date date;
 
 }

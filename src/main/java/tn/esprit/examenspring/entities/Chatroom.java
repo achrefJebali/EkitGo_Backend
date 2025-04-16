@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ChatRoom {
+public class Chatroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
