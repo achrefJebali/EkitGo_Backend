@@ -27,8 +27,6 @@ public class Quiz {
     /////QUIZSCORE//////
     @OneToMany(mappedBy="quiz",cascade= CascadeType.ALL)
     private Set<QuizScore>quizScores;
-    /////TRICHEDETECTION//////
-    @OneToMany(mappedBy="quiz",cascade= CascadeType.ALL)
-    private Set<TricheDetection>tricheDetections;
+
 
 }

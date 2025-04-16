@@ -13,6 +13,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Table(name = "`user`")
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,24 +37,17 @@ public class User {
 
 
     @JsonIgnore
-    ////////CLASSES/////
-    @ManyToMany(cascade = CascadeType.ALL)
-    private Set<Classes> classes;
-    
-    @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL )
-    Classes classe;
-    
-    @JsonIgnore
+
+
     ////////CLUB////////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Club> clubs;
-    
+
     @JsonIgnore
     ///////FORMATION////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Formation> formations;
-    
+
     @JsonIgnore
     ///////INTERVIEWS////
     @OneToMany(mappedBy = "student")
@@ -66,42 +61,39 @@ public class User {
     /////NOTIFICATION////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Notification> notifications;
-    
+
     @JsonIgnore
     /////TRICHEDETECTION//////
-    @OneToOne(cascade= CascadeType.ALL)
-    private TricheDetection tricheDetections;
-    
-    @JsonIgnore
+
     ////COMMENT////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Comment> comments;
-    
+
     @JsonIgnore
     /////ANNONCEMENT////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Announcment> announcments;
-    
+
     @JsonIgnore
     /////FEEDBACK/////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Feedback> feedbacks;
-    
+
     @JsonIgnore
     ////CHATROOM////
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<ChatRoom>  chatRooms;
-    
+
     @JsonIgnore
     ////MESSAGE////
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Message> messages;
-    
+
     @JsonIgnore
     ////COMPLAINT////
     @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
     private Set<Complaint>complaints;
-    
+
     @JsonIgnore
     ////ComplaintResponse///
     @ManyToMany(cascade = CascadeType.ALL)

@@ -21,7 +21,5 @@ public class Schedule {
     private LocalTime startTime;
     private LocalTime endTime;
 
-    @OneToMany(cascade= CascadeType.ALL, mappedBy="schedule")
-    private Set<Classes> classes;
 
 }

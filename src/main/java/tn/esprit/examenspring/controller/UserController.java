@@ -119,7 +119,31 @@ public class UserController {
     String photoUrl = userService.getPhotoUrl(id);
     return ResponseEntity.ok(Collections.singletonMap("photoUrl", photoUrl));
   }
+  
+  // Endpoint for updating user address (for Google Maps integration)
+  @PutMapping("/{id}/update-address")
+  public ResponseEntity<?> updateUserAddress(@PathVariable Integer id, @RequestBody Map<String, String> addressData) {
+    try {
+      String formattedAddress = addressData.get("address");
+      if (formattedAddress == null || formattedAddress.trim().isEmpty()) {
+        return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Address cannot be empty"));
+      }
+      
+      User user = userService.retrieveUserById(id);
+      if (user == null) {
+        return ResponseEntity.notFound().build();
+      }
+      
+      user.setAddress(formattedAddress);
+      userService.modifyUser(user);
+      
+      return ResponseEntity.ok(Collections.singletonMap("message", "Address updated successfully"));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(Collections.singletonMap("error", e.getMessage()));
     }
+  }
+}
 
 
 

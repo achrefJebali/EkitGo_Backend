@@ -23,7 +23,6 @@ public class Course {
     @OneToMany(cascade= CascadeType.ALL, mappedBy="course")
     private Set<Assignment> assignments;
     //////CLASSES///////
-    @ManyToOne
-    Classes classes;
+
 
 }

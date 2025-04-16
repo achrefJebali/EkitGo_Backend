@@ -13,6 +13,8 @@ public interface IUserService {
     User modifyUser(User user);
     void deleteUser(Integer id);
     Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
+    List<User> findAllByEmail(String email);
     boolean changePassword(String username, String currentPassword, String newPassword);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
@@ -21,10 +23,5 @@ public interface IUserService {
     String uploadUserPhoto(Integer Id, MultipartFile file);
     String getPhotoUrl(Integer id);
     User retrieveUserById(Integer id);
-
-
-
-
-
-
+    boolean requestPasswordReset(String email);
 }

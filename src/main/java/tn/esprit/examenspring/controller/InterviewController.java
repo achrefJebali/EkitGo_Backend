@@ -8,6 +8,7 @@ import tn.esprit.examenspring.dto.InterviewDTO;
 import tn.esprit.examenspring.entities.Interview;
 import tn.esprit.examenspring.entities.User;
 import tn.esprit.examenspring.services.IInterviewService;
+import tn.esprit.examenspring.services.INotificationService;
 import tn.esprit.examenspring.services.IUserService;
 
 import java.util.ArrayList;
@@ -22,16 +23,19 @@ import java.util.stream.Collectors;
 public class InterviewController {
     @Autowired
     private IInterviewService interviewService;
-    
+
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private INotificationService notificationService;
 
   // Original interview retrieval endpoint - Keep for backward compatibility
   @GetMapping("/retrieve-all-interviews")
   public ResponseEntity<?> getInterview() {
     return getSafeInterviews();
   }
-  
+
   // Special emergency endpoint that only returns basic data for debugging
   @GetMapping("/interviews-debug")
   public ResponseEntity<?> getInterviewsForDebugging() {
@@ -39,7 +43,7 @@ public class InterviewController {
       System.out.println("DEBUGGING ENDPOINT: Getting basic interview list");
       List<Interview> interviews = interviewService.getInterviews();
       List<Map<String, Object>> basicData = new ArrayList<>();
-      
+
       // Get only the very basic data, nothing that could cause issues
       for (Interview interview : interviews) {
         Map<String, Object> item = new HashMap<>();
@@ -47,47 +51,47 @@ public class InterviewController {
         item.put("date", String.valueOf(interview.getDate()));
         basicData.add(item);
       }
-      
+
       return ResponseEntity.ok(basicData);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity.ok(new ArrayList<>());
     }
   }
-  
+
   // New safe dedicated endpoint to guarantee no circular references
   @GetMapping("/interviews-safe")
   public ResponseEntity<?> getSafeInterviews() {
     try {
       System.out.println("Retrieving interviews using DIRECT SQL approach to avoid circular references");
-      
+
       // Get raw data directly from repository to avoid entity circular references
       List<Interview> rawInterviews = interviewService.getInterviews();
-      
+
       if (rawInterviews == null) {
         System.out.println("No interviews found");
         return ResponseEntity.ok(new ArrayList<>());
       }
-      
+
       System.out.println("Found " + rawInterviews.size() + " interviews");
-      
+
       // Create a list of maps with only the essential data
       List<Map<String, Object>> safeList = new ArrayList<>();
-      
+
       for (Interview interview : rawInterviews) {
         try {
           Map<String, Object> interviewMap = new HashMap<>();
-          
+
           // Add basic interview data
           interviewMap.put("id", interview.getId());
-          
+
           // Handle date safely
           if (interview.getDate() != null) {
             interviewMap.put("date", interview.getDate().toString());
           } else {
             interviewMap.put("date", null);
           }
-          
+
           // Add other simple properties
           interviewMap.put("duration", interview.getDuration());
           interviewMap.put("meeting_link", interview.getMeeting_link());
@@ -95,13 +99,13 @@ public class InterviewController {
           interviewMap.put("score", interview.getScore());
           interviewMap.put("extraBonus", interview.getExtraBonus());
           interviewMap.put("feedback", interview.getFeedback());
-          
+
           // Safely get student data
           try {
             if (interview.getStudent() != null) {
               interviewMap.put("studentId", interview.getStudent().getId());
-              interviewMap.put("studentName", 
-                  interview.getStudent().getName() != null ? 
+              interviewMap.put("studentName",
+                  interview.getStudent().getName() != null ?
                   interview.getStudent().getName() : "Unknown Student");
             } else {
               interviewMap.put("studentId", null);
@@ -112,13 +116,13 @@ public class InterviewController {
             interviewMap.put("studentId", null);
             interviewMap.put("studentName", "Error Loading Student");
           }
-          
+
           // Safely get teacher data
           try {
             if (interview.getTeacher() != null) {
               interviewMap.put("teacherId", interview.getTeacher().getId());
-              interviewMap.put("teacherName", 
-                  interview.getTeacher().getName() != null ? 
+              interviewMap.put("teacherName",
+                  interview.getTeacher().getName() != null ?
                   interview.getTeacher().getName() : "Unknown Teacher");
             } else {
               interviewMap.put("teacherId", null);
@@ -129,19 +133,19 @@ public class InterviewController {
             interviewMap.put("teacherId", null);
             interviewMap.put("teacherName", "Error Loading Teacher");
           }
-          
+
           safeList.add(interviewMap);
         } catch (Exception e) {
           System.out.println("Error processing interview: " + e.getMessage());
           // Continue with next interview
         }
       }
-      
+
       return ResponseEntity.ok(safeList);
     } catch (Exception e) {
       e.printStackTrace();
       System.out.println("CRITICAL ERROR retrieving interviews: " + e.getMessage());
-      
+
       // Return empty list instead of error status to prevent frontend issues
       return ResponseEntity.ok(new ArrayList<>());
     }
@@ -172,17 +176,17 @@ public class InterviewController {
         try {
             System.out.println("Received interview request body: " + requestBody);
             Interview interview;
-            
+
             // Check if we're dealing with a DTO or direct entity
             if (requestBody instanceof Map) {
                 // This is likely coming from the frontend with studentId and teacherId
                 @SuppressWarnings("unchecked")
                 Map<String, Object> requestMap = (Map<String, Object>) requestBody;
-                
+
                 // Extract student and teacher IDs
                 Integer studentId = null;
                 Integer teacherId = null;
-                
+
                 // First check for direct IDs
                 if (requestMap.containsKey("studentId") && requestMap.get("studentId") != null) {
                     if (requestMap.get("studentId") instanceof Integer) {
@@ -198,7 +202,7 @@ public class InterviewController {
                         }
                     }
                 }
-                
+
                 if (requestMap.containsKey("teacherId") && requestMap.get("teacherId") != null) {
                     if (requestMap.get("teacherId") instanceof Integer) {
                         teacherId = (Integer) requestMap.get("teacherId");
@@ -210,10 +214,10 @@ public class InterviewController {
                         }
                     }
                 }
-                
+
                 // Create a new interview with the student and teacher objects
                 interview = new Interview();
-                
+
                 // Set date
                 if (requestMap.containsKey("date") && requestMap.get("date") != null) {
                     try {
@@ -232,7 +236,7 @@ public class InterviewController {
                         }
                     }
                 }
-                
+
                 // Set duration
                 if (requestMap.containsKey("duration") && requestMap.get("duration") != null) {
                     if (requestMap.get("duration") instanceof Integer) {
@@ -245,21 +249,21 @@ public class InterviewController {
                         }
                     }
                 }
-                
+
                 // Set meeting link
                 if (requestMap.containsKey("meeting_link") && requestMap.get("meeting_link") != null) {
                     interview.setMeeting_link((String) requestMap.get("meeting_link"));
                 }
-                
+
                 // Set notes
                 if (requestMap.containsKey("notes") && requestMap.get("notes") != null) {
                     interview.setNotes((String) requestMap.get("notes"));
                 }
-                
+
                 // Get User objects
                 User student = null;
                 User teacher = null;
-                
+
                 if (studentId != null) {
                     student = userService.retrieveUserById(studentId);
                     if (student == null) {
@@ -267,7 +271,7 @@ public class InterviewController {
                     }
                     interview.setStudent(student);
                 }
-                
+
                 if (teacherId != null) {
                     teacher = userService.retrieveUserById(teacherId);
                     if (teacher == null) {
@@ -279,43 +283,63 @@ public class InterviewController {
                 // Direct entity provided
                 interview = (Interview) requestBody;
             }
-            
+
             // More flexible validation
             // Validate required fields
             if (interview.getStudent() == null || interview.getTeacher() == null) {
                 return ResponseEntity.badRequest().body("Student and teacher must be specified");
             }
-            
+
             // Use default duration if not specified
             if (interview.getDuration() == null || interview.getDuration() < 15) {
                 System.out.println("Using default duration of 30 minutes");
                 interview.setDuration(30);
             }
-            
+
             // Use current date if not specified
             if (interview.getDate() == null) {
                 System.out.println("Using current date for interview");
                 interview.setDate(new java.util.Date());
             }
-            
-            // Save the interview
-            Interview savedInterview = interviewService.addInterview(interview);
-            System.out.println("Interview saved successfully with id: " + savedInterview.getId());
-            
-            // Create a simplified response to avoid circular references
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", savedInterview.getId());
-            response.put("studentId", savedInterview.getStudent().getId());
-            response.put("teacherId", savedInterview.getTeacher().getId());
-            response.put("date", savedInterview.getDate().toString());
-            response.put("duration", savedInterview.getDuration());
-            response.put("meeting_link", savedInterview.getMeeting_link());
-            response.put("notes", savedInterview.getNotes());
-            response.put("studentName", savedInterview.getStudentName());
-            response.put("teacherName", savedInterview.getTeacherName());
-            response.put("message", "Interview scheduled successfully");
-            
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+            try {
+                // Save the interview
+                Interview savedInterview = interviewService.addInterview(interview);
+                System.out.println("Interview saved successfully with id: " + savedInterview.getId());
+
+                // Create a notification for the student
+                if (savedInterview.getStudent() != null) {
+                    notificationService.createInterviewNotification(
+                        savedInterview.getStudent().getId(),
+                        savedInterview.getId(),
+                        savedInterview.getMeeting_link(),
+                        savedInterview.getDate().toString()
+                    );
+                }
+
+                // Create a simplified response to avoid circular references
+                Map<String, Object> response = new HashMap<>();
+                response.put("id", savedInterview.getId());
+                response.put("studentId", savedInterview.getStudent().getId());
+                response.put("teacherId", savedInterview.getTeacher().getId());
+                response.put("date", savedInterview.getDate().toString());
+                response.put("duration", savedInterview.getDuration());
+                response.put("meeting_link", savedInterview.getMeeting_link());
+                response.put("notes", savedInterview.getNotes());
+                response.put("studentName", savedInterview.getStudentName());
+                response.put("teacherName", savedInterview.getTeacherName());
+                response.put("message", "Interview scheduled successfully");
+
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            } catch (RuntimeException e) {
+                // Catch the one interview per student constraint violation
+                if (e.getMessage().contains("Only one interview per student is allowed")) {
+                    Map<String, String> errorResponse = new HashMap<>();
+                    errorResponse.put("error", e.getMessage());
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+                }
+                throw e; // Re-throw if it's a different exception
+            }
         } catch (Exception e) {
             e.printStackTrace(); // Log the full stack trace
             return new ResponseEntity<>("Failed to add interview: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -333,7 +357,7 @@ public class InterviewController {
             Integer duration = 30; // Default duration
             String meetingLink = "";
             String notes = "";
-            
+
             // Parse studentId
             if (requestBody.containsKey("studentId")) {
                 if (requestBody.get("studentId") instanceof Integer) {
@@ -348,7 +372,7 @@ public class InterviewController {
                     studentId = ((Number) requestBody.get("studentId")).intValue();
                 }
             }
-            
+
             // Parse teacherId
             if (requestBody.containsKey("teacherId")) {
                 if (requestBody.get("teacherId") instanceof Integer) {
@@ -363,12 +387,12 @@ public class InterviewController {
                     teacherId = ((Number) requestBody.get("teacherId")).intValue();
                 }
             }
-            
+
             // Parse date
             if (requestBody.containsKey("date") && requestBody.get("date") != null) {
                 dateStr = requestBody.get("date").toString();
             }
-            
+
             // Parse duration
             if (requestBody.containsKey("duration")) {
                 if (requestBody.get("duration") instanceof Integer) {
@@ -383,33 +407,41 @@ public class InterviewController {
                     duration = ((Number) requestBody.get("duration")).intValue();
                 }
             }
-            
+
             // Parse meeting link
             if (requestBody.containsKey("meeting_link") && requestBody.get("meeting_link") != null) {
                 meetingLink = requestBody.get("meeting_link").toString();
             }
-            
+
             // Parse notes
             if (requestBody.containsKey("notes") && requestBody.get("notes") != null) {
                 notes = requestBody.get("notes").toString();
             }
-            
+
             // Validate the required data
             if (studentId == null || teacherId == null || dateStr == null) {
                 return ResponseEntity.badRequest().body("Missing required fields (studentId, teacherId, date)");
             }
-            
+
+            // Check if student already has an interview (redundant check for extra security)
+            List<Interview> existingInterviews = interviewService.getInterviewsByStudentId(studentId);
+            if (!existingInterviews.isEmpty()) {
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", "Student already has a scheduled interview. Only one interview per student is allowed.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+            }
+
             // Get the User entities
             User student = userService.retrieveUserById(studentId);
             User teacher = userService.retrieveUserById(teacherId);
-            
+
             if (student == null) {
                 return ResponseEntity.badRequest().body("Student with ID " + studentId + " not found");
             }
             if (teacher == null) {
                 return ResponseEntity.badRequest().body("Teacher with ID " + teacherId + " not found");
             }
-            
+
             // Create a new Interview entity
             Interview interview = new Interview();
             interview.setStudent(student);
@@ -417,7 +449,7 @@ public class InterviewController {
             interview.setDuration(duration);
             interview.setMeeting_link(meetingLink);
             interview.setNotes(notes);
-            
+
             // Parse the date
             try {
                 // Try multiple date formats
@@ -444,7 +476,7 @@ public class InterviewController {
                         }
                     }
                 }
-                
+
                 if (date != null) {
                     interview.setDate(date);
                 } else {
@@ -455,10 +487,10 @@ public class InterviewController {
                 // If all parsing fails, use current date
                 interview.setDate(new java.util.Date());
             }
-            
+
             // Save the interview
             Interview savedInterview = interviewService.addInterview(interview);
-            
+
             // Create a simplified response object without circular references
             Map<String, Object> response = new HashMap<>();
             response.put("id", savedInterview.getId());
@@ -470,7 +502,7 @@ public class InterviewController {
             response.put("notes", savedInterview.getNotes());
             response.put("studentName", savedInterview.getStudentName());
             response.put("teacherName", savedInterview.getTeacherName());
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -487,13 +519,13 @@ public class InterviewController {
             if (existingInterview == null) {
                 return new ResponseEntity<>("Interview with id " + id + " not found", HttpStatus.NOT_FOUND);
             }
-            
+
             interviewService.deleteInterview(id);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Interview with id " + id + " successfully deleted");
             response.put("deletedInterview", existingInterview);
-            
+
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Failed to delete interview: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -507,18 +539,18 @@ public class InterviewController {
             if (interview.getId() == null) {
                 return new ResponseEntity<>("Interview ID must be provided", HttpStatus.BAD_REQUEST);
             }
-            
+
             // Find existing interview
             Interview existingInterview = interviewService.getInterviewById(interview.getId());
             if (existingInterview == null) {
                 return new ResponseEntity<>("Interview with id " + interview.getId() + " not found", HttpStatus.NOT_FOUND);
             }
-            
+
             // Validate duration if provided
             if (interview.getDuration() != null && interview.getDuration() < 15) {
                 return new ResponseEntity<>("Interview duration must be at least 15 minutes", HttpStatus.BAD_REQUEST);
             }
-            
+
             // Update only non-null fields to allow partial updates
             if (interview.getDate() != null) existingInterview.setDate(interview.getDate());
             if (interview.getDuration() != null) existingInterview.setDuration(interview.getDuration());
@@ -529,10 +561,10 @@ public class InterviewController {
             if (interview.getExtraBonus() != null) existingInterview.setExtraBonus(interview.getExtraBonus());
             if (interview.getStudent() != null) existingInterview.setStudent(interview.getStudent());
             if (interview.getTeacher() != null) existingInterview.setTeacher(interview.getTeacher());
-            
+
             // Save updated interview
             Interview updatedInterview = interviewService.modifyInterview(existingInterview);
-            
+
             return new ResponseEntity<>(updatedInterview, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Failed to update interview: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -554,7 +586,7 @@ public class InterviewController {
             interview.setFeedback(feedback);
             // Names are automatically populated by the getters
             Interview updatedInterview = interviewService.modifyInterview(interview);
-            
+
             return new ResponseEntity<>(updatedInterview, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Failed to submit feedback: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

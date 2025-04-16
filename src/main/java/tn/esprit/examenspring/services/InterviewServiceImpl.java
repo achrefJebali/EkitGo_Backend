@@ -14,6 +14,13 @@ public class InterviewServiceImpl implements IInterviewService {
 
     @Override
     public Interview addInterview(Interview interview) {
+        // Check if student already has an active interview
+        if (interview.getStudent() != null) {
+            List<Interview> existingInterviews = interviewsRepository.findByStudentId(interview.getStudent().getId());
+            if (!existingInterviews.isEmpty()) {
+                throw new RuntimeException("Student already has a scheduled interview. Only one interview per student is allowed.");
+            }
+        }
         return interviewsRepository.save(interview);
     }
 

@@ -6,18 +6,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import tn.esprit.examenspring.Repository.PasswordResetTokenRepository;
 import tn.esprit.examenspring.Repository.UserRepository;
+import tn.esprit.examenspring.entities.PasswordResetToken;
 import tn.esprit.examenspring.entities.Role;
 import tn.esprit.examenspring.entities.User;
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Slf4j
 public class UserServicelmpl implements IUserService{
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -83,8 +90,23 @@ public class UserServicelmpl implements IUserService{
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
-
-
+    }
+    
+    @Override
+    public Optional<User> findByEmail(String email) {
+        log.info("Looking up user by email: {}", email);
+        try {
+            return userRepository.findByEmail(email);
+        } catch (Exception e) {
+            log.error("Error finding user by email: {}", email, e);
+            return Optional.empty();
+        }
+    }
+    
+    @Override
+    public List<User> findAllByEmail(String email) {
+        log.info("Looking up all users with email: {}", email);
+        return userRepository.findAllByEmail(email);
     }
 
     // ✅ Implementing the password change logic
@@ -149,5 +171,72 @@ public class UserServicelmpl implements IUserService{
   @Override
   public User retrieveUserById(Integer id) {
     return userRepository.findById(id).orElse(null);
+  }
+  
+  @Override
+  public boolean requestPasswordReset(String email) {
+    try {
+      log.info("Processing password reset request for email: {}", email);
+      
+      // Use findAllByEmail instead of findByEmail to handle duplicate email addresses
+      List<User> users = userRepository.findAllByEmail(email);
+      if (users.isEmpty()) {
+        log.warn("Password reset requested for non-existent email: {}", email);
+        return false;
+      }
+      
+      // Log the number of users found with this email address
+      if (users.size() > 1) {
+        log.warn("Multiple users ({}) found with email: {}, using the first one", users.size(), email);
+      }
+      
+      // Use the first user from the list
+      User user = users.get(0);
+      log.info("Found user for password reset: ID={}, Name={}", user.getId(), user.getName());
+      
+      try {
+        // Delete any existing token for this user
+        passwordResetTokenRepository.findByUser(user).ifPresent(token -> {
+          log.info("Deleting existing token for user ID: {}", user.getId());
+          passwordResetTokenRepository.delete(token);
+        });
+      } catch (Exception ex) {
+        log.error("Error while deleting existing token: {}", ex.getMessage(), ex);
+        // Continue despite this error
+      }
+      
+      // Generate new reset token
+      String resetToken = emailService.generateResetToken();
+      log.info("Generated new reset token for user ID: {}", user.getId());
+      
+      try {
+        // Create password reset token entity
+        PasswordResetToken passwordResetToken = new PasswordResetToken();
+        passwordResetToken.setUser(user);
+        passwordResetToken.setToken(resetToken);
+        passwordResetToken.setExpiryDate(LocalDateTime.now().plusMinutes(30)); // Token valid for 30 minutes
+        
+        // Save token to database
+        passwordResetTokenRepository.save(passwordResetToken);
+        log.info("Saved new password reset token to database for user ID: {}", user.getId());
+      } catch (Exception ex) {
+        log.error("Error while saving token to database: {}", ex.getMessage(), ex);
+        throw ex; // Re-throw as this is a critical error
+      }
+      
+      try {
+        // Send email with reset link
+        boolean emailSent = emailService.sendPasswordResetEmail(user, resetToken);
+        log.info("Email sending result for user ID {}: {}", user.getId(), emailSent ? "SUCCESS" : "FAILED");
+        return emailSent;
+      } catch (Exception ex) {
+        log.error("Error while sending password reset email: {}", ex.getMessage(), ex);
+        // Return false but don't throw exception as the token was created successfully
+        return false;
+      }
+    } catch (Exception ex) {
+      log.error("Unexpected error in requestPasswordReset: {}", ex.getMessage(), ex);
+      return false;
+    }
   }
 }

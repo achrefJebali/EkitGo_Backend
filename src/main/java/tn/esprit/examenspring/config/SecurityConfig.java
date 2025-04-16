@@ -39,8 +39,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 // Configure CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // Allow all requests for development/debugging
+                // Configure specific security permissions
                 .authorizeHttpRequests(auth -> auth
+                    // Public endpoints for authentication
+                    .requestMatchers("/api/auth/login").permitAll()
+                    .requestMatchers("/api/auth/forgot-password").permitAll()
+                    .requestMatchers("/api/auth/validate-reset-token").permitAll()
+                    .requestMatchers("/api/auth/reset-password").permitAll()
+                    // Allow all other requests for development
                     .requestMatchers("/**").permitAll()
                     .anyRequest().permitAll())
                 // Don't use sessions for REST API
