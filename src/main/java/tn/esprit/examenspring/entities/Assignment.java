@@ -25,6 +25,7 @@ public class Assignment {
     @ToString.Exclude
     @JsonIgnore
     private Set<Submission> submissions;
+
     @ManyToOne
     @ToString.Exclude
     @JsonIgnore

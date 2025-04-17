@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.util.Set;
 
-
 @Entity
 @Data
 @Getter
@@ -13,6 +12,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Table(name = "`user`")
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,77 +27,89 @@ public class User {
     private String photo;
     private String status;
     private Float balance;
-
     @Enumerated(EnumType.STRING)
     private Role role;
     private String Token;
     private Boolean isPaid;
     private Integer weeklyInterviews;
+
     ////////CLASSES/////
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @ToString.Exclude
     @JsonIgnore
     private Set<Classes> classes;
+
     ////////CLUB////////
     @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Club> clubs;
+
     ///////FORMATION////
     @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Formation> formations;
-    ///////INTERVIEWS////
-    @ManyToMany(cascade = CascadeType.ALL)
-    @ToString.Exclude
+
     @JsonIgnore
-    private Set<Interview> interviews;
+    ///////INTERVIEWS////
+    @OneToMany(mappedBy = "student")
+    private Set<Interview> studentInterviews;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "teacher")
+    private Set<Interview> teacherInterviews;
+
     /////NOTIFICATION////
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Notification> notifications;
+
     /////TRICHEDETECTION//////
     @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<TricheDetection>tricheDetections;
+
     ////COMMENT////
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Comment> comments;
+
     /////ANNONCEMENT////
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Announcment> announcments;
+
     /////FEEDBACK/////
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Feedback> feedbacks;
-    ////CHATROOM////
-    @ManyToMany(cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @JsonIgnore
-    private Set<ChatRoom>  chatRooms;
+
+
+
     ////MESSAGE////
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Message> messages;
+
     ////COMPLAINT////
     @OneToMany(mappedBy="user",cascade= CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Complaint>complaints;
+
     ////ComplaintResponse///
     @ManyToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set <ComplaintResponse>complaintResponses;
+
     ////REVIEW/////////
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude

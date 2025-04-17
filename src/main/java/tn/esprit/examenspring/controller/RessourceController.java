@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.examenspring.entities.Formation;
 import tn.esprit.examenspring.entities.Ressource;
 import tn.esprit.examenspring.services.IRessourceService;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,10 +28,12 @@ public class RessourceController {
     public Ressource addRessource(@RequestBody Ressource r) {
         return ressourceService.addRessource(r);
     }
+
     @DeleteMapping("/remove-ressource/{ressource-id}")
     public void removeRessource(@PathVariable("ressource-id") Integer fid) {
         ressourceService.deleteRessource(fid);
     }
+
     @PutMapping("/modify-ressource/{id}")
     public Ressource modifyRessource(@PathVariable Integer id, @RequestBody Ressource r) {
         return ressourceService.modifyRessource(id, r);

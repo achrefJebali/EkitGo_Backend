@@ -16,13 +16,13 @@ import java.util.Date;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private  Integer senderId;
-    private Integer receiverId;
-    private Date sentDate;
-    private Date receivedDate;
+    public int id;
+    public  int senderId;
+    public int receiverId;
+    public Date sentDate;
+    public Date receivedDate;
     @Enumerated(EnumType.STRING)
-    private MessageStatus messageStatus;
+    public MessageStatus messageStatus;
 
     @OneToOne
     @ToString.Exclude

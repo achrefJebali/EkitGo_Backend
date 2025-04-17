@@ -5,6 +5,8 @@ import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
+import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,8 +18,6 @@ import tn.esprit.examenspring.entities.User;
 import tn.esprit.examenspring.services.IPurchaseService;
 import tn.esprit.examenspring.Repository.UserRepository;
 import tn.esprit.examenspring.services.PaymentService;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -31,7 +31,7 @@ public class PaymentController {
     private IPurchaseService purchaseService; // Inject PurchaseService
 
     @Autowired
-    private UserRepository userRepository; // Inject UserRepository
+    private UserRepository userRepository;
 
     @Value("${stripe.webhook.secret}")
     private String webhookSecret; // Add this to application.properties
@@ -83,10 +83,9 @@ public class PaymentController {
                     }
 
                     // Find the user by email
-                    User user = userRepository.findByEmail(customerEmail);
-                    if (user == null) {
-                        throw new RuntimeException("User not found for email: " + customerEmail);
-                    }
+                    final String emailForLookup = customerEmail;
+                    User user = userRepository.findByEmail(emailForLookup)
+                        .orElseThrow(() -> new RuntimeException("User not found for email: " + emailForLookup));
 
                     // Extract userId and formationId from session metadata
                     Map<String, String> metadata = session.getMetadata();

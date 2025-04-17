@@ -16,7 +16,7 @@ import java.util.Date;
 public class Reaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    public int id;
     @Enumerated(EnumType.STRING)
     private Emoji emoji;
     private Date date;
@@ -25,5 +25,4 @@ public class Reaction {
     @ToString.Exclude
     @JsonIgnore
     private Message message;
-
 }

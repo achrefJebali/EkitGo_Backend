@@ -26,5 +26,4 @@ public class Schedule {
     @ToString.Exclude
     @JsonIgnore
     private Set<Classes> classes;
-
 }

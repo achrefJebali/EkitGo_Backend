@@ -30,5 +30,4 @@ public class Course {
     @ToString.Exclude
     @JsonIgnore
     Classes classes;
-
 }

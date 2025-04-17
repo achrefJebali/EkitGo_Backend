@@ -24,6 +24,8 @@ public class Announcment {
     private String postdesc;
     private Date creatdate;
 
+
+
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore

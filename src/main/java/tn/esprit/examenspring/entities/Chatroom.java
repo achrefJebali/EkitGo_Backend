@@ -14,16 +14,11 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ChatRoom {
+public class Chatroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-
-    @ManyToMany(mappedBy="chatRooms",cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @JsonIgnore
-    private Set<User>users;
 
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude

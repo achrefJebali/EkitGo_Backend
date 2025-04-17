@@ -24,8 +24,9 @@ public class Planning {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Date eventDate;
     private LocalTime starttime;
-    private LocalTime endTime;
+    private LocalTime endtime;
     private String description;
 
     @OneToOne (mappedBy="planning")
