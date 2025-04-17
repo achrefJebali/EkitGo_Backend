@@ -24,9 +24,17 @@ public class RessourceServiceImpl implements IRessourceService{
     }
 
     @Override
-    public Ressource modifyRessource(Ressource ressource) {
-        ressourceRepository.save(ressource);
-        return ressource;
+    public Ressource modifyRessource(Integer id, Ressource ressource) {
+        Ressource existingRessource = ressourceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ressource not found with id: " + id));
+
+        existingRessource.setTitle(ressource.getTitle());
+        existingRessource.setType(ressource.getType());
+        existingRessource.setDescription(ressource.getDescription());
+        existingRessource.setFileUrl(ressource.getFileUrl());
+        existingRessource.setFormation(ressource.getFormation());
+
+        return ressourceRepository.save(existingRessource);
     }
 
     @Override
@@ -34,5 +42,10 @@ public class RessourceServiceImpl implements IRessourceService{
         ressourceRepository.deleteById(id);
 
 
+    }
+
+    @Override
+    public List<Ressource> getRessourcesByFormation(Integer formationId) {
+        return ressourceRepository.findByFormationId(formationId);
     }
 }

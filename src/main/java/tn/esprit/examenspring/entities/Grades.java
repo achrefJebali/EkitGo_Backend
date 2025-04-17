@@ -16,7 +16,7 @@ import java.util.Set;
 public class Grades {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idGrade;
+    private Integer id;
     private String description;
 
     @ManyToMany(cascade = CascadeType.ALL)

@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,12 +23,9 @@ public class Ressource {
     private String title;
     private String fileUrl;
     private String description;
-    @OneToMany(cascade= CascadeType.ALL, mappedBy="ressource")
-    @ToString.Exclude
+    private boolean completedByStudent;
+    @ManyToOne
     @JsonIgnore
-    private Set<Formation> formations;
-
-
-
+    private Formation formation;
 
 }

@@ -16,7 +16,8 @@ import java.util.Set;
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idQuiz;
+    @Column(name = "idQuiz")
+    private Integer id;
     private String title;
     private String description;
     private Float duration;
@@ -37,5 +38,9 @@ public class Quiz {
     @ToString.Exclude
     @JsonIgnore
     private Set<TricheDetection>tricheDetections;
-
+    /////FORMATION///
+    @OneToOne(fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @JsonIgnore
+    private Formation formation;
 }

@@ -19,7 +19,6 @@ public class Category {
     private Integer id;
     private String name;
     private String description;
-    private String picture;
     @OneToMany(cascade= CascadeType.ALL, mappedBy="category")
     @ToString.Exclude
     @JsonIgnore

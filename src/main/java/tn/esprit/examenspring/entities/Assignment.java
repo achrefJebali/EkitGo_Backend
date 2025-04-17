@@ -30,4 +30,3 @@ public class Assignment {
     @JsonIgnore
     Course course;
 }
-

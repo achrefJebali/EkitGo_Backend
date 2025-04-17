@@ -1,46 +1,55 @@
 package tn.esprit.examenspring.controller;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tn.esprit.examenspring.entities.Category; // Assuming this exists
-import tn.esprit.examenspring.entities.Formation;
-import tn.esprit.examenspring.services.IFormationService;
-import tn.esprit.examenspring.services.ICategoryService; // Add this for category handling
+import tn.esprit.examenspring.entities.*;
+import tn.esprit.examenspring.services.*;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
 @RequestMapping("/Formation")
 public class FormationController {
-
     @Autowired
     private IFormationService formationService;
+
+    @Autowired
+    private IPurchaseService purchaseService;
+    @Autowired
+    private IProgressService progressService;
+
+    @Autowired
+    private ICertificateService certificateService;
 
     @Autowired
     private ICategoryService categoryService;
 
     private static final String UPLOAD_DIR = "uploads/";
 
-    @GetMapping("/retrieve-all-formation")
-    public List<Formation> getFormation() {
-        return formationService.getFormations();
-    }
-
     @PostMapping("/add-formation")
     public Formation addFormation(@RequestBody Formation f) {
+
         return formationService.addFormation(f);
     }
 
@@ -84,12 +93,9 @@ public class FormationController {
             @RequestParam("price") String price,
             @RequestParam("description") String description,
             @RequestParam("categoryName") String categoryName,
-            @RequestParam(value = "certificate", required = false) String certificate,
-            @RequestParam(value = "video", required = false) String video,
             @RequestParam(value = "discount", required = false) String discount,
             @RequestParam(value = "featured", defaultValue = "false") String featured,
-            @RequestParam(value = "highestRated", defaultValue = "false") String highestRated,
-            @RequestParam(value = "progression", required = false) String progression) {
+            @RequestParam(value = "highestRated", defaultValue = "false") String highestRated) {
 
         log.info("Received new formation request with image: {}", image.getOriginalFilename());
 
@@ -135,12 +141,11 @@ public class FormationController {
             formation.setPrice(Float.parseFloat(price));
             formation.setDescription(description);
             formation.setImage("/uploads/" + uniqueFileName);
-            formation.setCertificate(certificate);
-            formation.setVideo(video);
-            formation.setDiscount(discount != null ? Integer.parseInt(discount) : null);
+            if (discount != null) {
+                formation.setDiscount(Integer.parseInt(discount));
+            }
             formation.setFeatured(Boolean.parseBoolean(featured));
             formation.setHighestRated(Boolean.parseBoolean(highestRated));
-            formation.setProgression(progression);
 
             // Handle Category
             if (categoryName != null && !categoryName.isEmpty()) {
@@ -179,12 +184,9 @@ public class FormationController {
             @RequestParam("duration") String duration,
             @RequestParam("label") String label,
             @RequestParam("categoryName") String categoryName,
-            @RequestParam(value = "certificate", required = false) String certificate,
-            @RequestParam(value = "video", required = false) String video,
             @RequestParam(value = "discount", required = false) String discount,
             @RequestParam(value = "featured", defaultValue = "false") String featured,
-            @RequestParam(value = "highestRated", defaultValue = "false") String highestRated,
-            @RequestParam(value = "progression", required = false) String progression) {
+            @RequestParam(value = "highestRated", defaultValue = "false") String highestRated) {
 
         log.info("Received update request for formation ID: {}", id);
 
@@ -196,12 +198,11 @@ public class FormationController {
             formation.setPrice(Float.parseFloat(price));
             formation.setDuration(duration);
             formation.setLabel(label);
-            formation.setCertificate(certificate);
-            formation.setVideo(video);
-            formation.setDiscount(discount != null ? Integer.parseInt(discount) : null);
+            if (discount != null) {
+                formation.setDiscount(Integer.parseInt(discount));
+            }
             formation.setFeatured(Boolean.parseBoolean(featured));
             formation.setHighestRated(Boolean.parseBoolean(highestRated));
-            formation.setProgression(progression);
 
             // Handle Category
             if (categoryName != null && !categoryName.isEmpty()) {
@@ -257,6 +258,7 @@ public class FormationController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
     @GetMapping("/image/{formationId}")
     public ResponseEntity<Resource> getFormationImage(@PathVariable Integer formationId) {
         try {
@@ -288,6 +290,206 @@ public class FormationController {
         } catch (MalformedURLException e) {
             log.error("Error loading image for formation ID {}: {}", formationId, e.getMessage(), e);
             return ResponseEntity.internalServerError().build();
-
         }
-    }}
+    }
+
+    @PostMapping("/progress/{userId}/{formationId}")
+    public ResponseEntity<Progress> updateProgress(
+            @PathVariable Integer userId,
+            @PathVariable Integer formationId,
+            @RequestBody ProgressRequest progressRequest) {
+        Progress progress = progressService.createOrUpdateProgress(
+                userId,
+                formationId,
+                progressRequest.getProgressPercentage(),
+                progressRequest.isVideosCompleted(),
+                progressRequest.getQuizScore()
+        );
+        return ResponseEntity.ok(progress);
+    }
+
+    @GetMapping("/progress/{userId}/{formationId}")
+    public ResponseEntity<Progress> getProgress(
+            @PathVariable Integer userId,
+            @PathVariable Integer formationId) {
+        log.info("Fetching progress for userId: {}, formationId: {}", userId, formationId);
+        Progress progress = progressService.getProgress(userId, formationId);
+        return ResponseEntity.ok(progress);
+    }
+
+    @PostMapping("/progress/{userId}/{formationId}/video-watched/{videoId}")
+    public ResponseEntity<?> markVideoWatched(@PathVariable Integer userId, @PathVariable Integer formationId, @PathVariable Long videoId) {
+        progressService.markVideoWatched(userId, formationId, videoId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/progress/{userId}/{formationId}/watched-videos")
+    public ResponseEntity<List<Long>> getWatchedVideos(@PathVariable Integer userId, @PathVariable Integer formationId) {
+        return ResponseEntity.ok(progressService.getWatchedVideoIds(userId, formationId));
+    }
+
+    @GetMapping("/certificate/{userId}/{formationId}/download")
+    public ResponseEntity<?> downloadCertificate(@PathVariable Integer userId, @PathVariable Integer formationId) {
+        try {
+            log.info("Downloading certificate for userId: {}, formationId: {}", userId, formationId);
+
+            // Validate certificate eligibility
+            if (!progressService.isCourseCompleted(userId, formationId)) {
+                log.warn("User {} is not eligible for a certificate for formation {}", userId, formationId);
+                return ResponseEntity.status(403).body(Map.of(
+                        "error", "Forbidden",
+                        "message", "User is not eligible for a certificate"
+                ));
+            }
+
+            // Check if certificate exists
+            Certificate certificate = certificateService.getCertificate(userId, formationId);
+            if (certificate == null) {
+                log.info("Certificate not found for userId: {}, formationId: {}. Issuing a new certificate.", userId, formationId);
+                certificate = certificateService.issueCertificate(userId, formationId);
+            }
+
+            byte[] pdfBytes = certificateService.generateCertificatePdf(userId, formationId);
+            log.info("Successfully generated PDF for userId: {}, formationId: {}", userId, formationId);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=certificate_" + userId + "_" + formationId + ".pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+        } catch (Exception e) {
+            log.error("Error downloading certificate for userId: {}, formationId: {}: {}", userId, formationId, e.getMessage(), e);
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Internal Server Error",
+                    "message", "Failed to download certificate: " + e.getMessage()
+            ));
+        }
+    }
+
+    @PostMapping("/certificate/{userId}/{formationId}")
+    public ResponseEntity<Certificate> issueCertificate(
+            @PathVariable Integer userId,
+            @PathVariable Integer formationId) {
+        try {
+            Certificate certificate = certificateService.issueCertificate(userId, formationId);
+            return ResponseEntity.ok(certificate);
+        } catch (Exception e) {
+            log.error("Error issuing certificate for userId: {}, formationId: {}: {}", userId, formationId, e.getMessage(), e);
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/certificate/{userId}/{formationId}")
+    public ResponseEntity<Certificate> getCertificate(
+            @PathVariable Integer userId,
+            @PathVariable Integer formationId) {
+        try {
+            log.info("Fetching certificate for userId: {}, formationId: {}", userId, formationId);
+            Certificate certificate = certificateService.getCertificate(userId, formationId);
+            if (certificate == null) {
+                log.warn("Certificate not found for userId: {}, formationId: {}", userId, formationId);
+                return ResponseEntity.status(404).body(null);
+            }
+            return ResponseEntity.ok(certificate);
+        } catch (Exception e) {
+            log.error("Error fetching certificate for userId: {}, formationId: {}: {}", userId, formationId, e.getMessage(), e);
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @PostMapping("/purchase/{userId}/{formationId}")
+    public ResponseEntity<Purchase> createPurchase(
+            @PathVariable Integer userId,
+            @PathVariable Integer formationId,
+            @RequestParam String paymentReference) {
+        try {
+            Purchase purchase = purchaseService.createPurchase(userId, formationId, paymentReference);
+            return ResponseEntity.ok(purchase);
+        } catch (Exception e) {
+            log.error("Error creating purchase for userId: {}, formationId: {}: {}", userId, formationId, e.getMessage(), e);
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getFormations(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Formation> formationPage = formationService.getFormations(pageable);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("formations", formationPage.getContent());
+            response.put("totalItems", formationPage.getTotalElements());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching formations: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchFormations(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) Float minPrice,
+            @RequestParam(required = false) Float maxPrice,
+            @RequestParam(required = false) String label,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Formation> formationPage = formationService.searchFormations(
+                    title, categoryName, minPrice, maxPrice, label, pageable);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("formations", formationPage.getContent());
+            response.put("totalItems", formationPage.getTotalElements());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error searching formations: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/purchased-formations/{userId}")
+    public ResponseEntity<List<Formation>> getPurchasedFormations(@PathVariable Integer userId) {
+        try {
+            List<Purchase> purchases = purchaseService.getPurchasedFormations(userId);
+            List<Formation> formations = purchases.stream()
+                    .map(Purchase::getFormation)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(formations);
+        } catch (Exception e) {
+            log.error("Error fetching purchased formations for userId: {}: {}", userId, e.getMessage(), e);
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @PutMapping("/formations/{id}/discount")
+    public ResponseEntity<Formation> updateDiscount(@PathVariable Integer id, @RequestParam Integer discount) {
+        Formation updated = formationService.updateDiscount(id, discount);
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/by-title/{title}")
+    public ResponseEntity<Formation> getFormationByTitle(@PathVariable String title) {
+        Formation formation = formationService.findByTitle(title);
+        if (formation == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(formation);
+    }
+
+    @GetMapping("/retrieve-all-formation")
+    public List<Formation> getAllFormations() {
+        return formationService.retrieveAllFormations();
+    }
+
+    @Setter
+    @Getter
+    public static class ProgressRequest {
+        private int progressPercentage;
+        private boolean videosCompleted;
+        private Integer quizScore; // Use Integer to allow null
+    }
+}
