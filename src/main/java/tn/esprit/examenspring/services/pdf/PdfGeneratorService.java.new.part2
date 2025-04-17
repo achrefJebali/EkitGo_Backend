@@ -1,0 +1,98 @@
+    /**
+     * Extrait les informations du quiz (score, couleurs, réussite)
+     */
+    private QuizResult extractQuizResult(String html) {
+        QuizResult result = new QuizResult();
+        
+        try {
+            // Extraire le score (pourcentage ou fraction)
+            Pattern scorePattern = Pattern.compile("(\\d+)%|Score\\s*:\\s*(\\d+)\\s*/\\s*(\\d+)");
+            Matcher scoreMatcher = scorePattern.matcher(html);
+            
+            if (scoreMatcher.find()) {
+                if (scoreMatcher.group(1) != null) {
+                    // Format pourcentage
+                    result.score = scoreMatcher.group(1) + "%";
+                } else if (scoreMatcher.group(2) != null && scoreMatcher.group(3) != null) {
+                    // Format fraction X/Y
+                    result.score = scoreMatcher.group(2) + "/" + scoreMatcher.group(3);
+                }
+            }
+            
+            // Déterminer si le quiz est réussi
+            boolean hasSuccessMessage = html.contains("Félicitations") || 
+                                      html.contains("réussi le quiz") ||
+                                      html.contains("Bravo");
+            
+            // Détecter la couleur d'en-tête (généralement verte pour réussite, rouge pour échec)
+            Pattern colorPattern = Pattern.compile("background-color:\\s*([#][0-9a-fA-F]{6})");
+            Matcher colorMatcher = colorPattern.matcher(html);
+            
+            if (colorMatcher.find()) {
+                String hexColor = colorMatcher.group(1);
+                
+                // Déterminer si c'est vert ou rouge en fonction du code hex
+                if (hexColor.equalsIgnoreCase("#2ecc71")) {
+                    // Vert - Quiz réussi
+                    result.headerColor = COLOR_GREEN;
+                    result.isPassed = true;
+                } else if (hexColor.equalsIgnoreCase("#e74c3c")) {
+                    // Rouge - Quiz échoué
+                    result.headerColor = COLOR_RED;
+                    result.isPassed = false;
+                }
+            } else {
+                // Si pas de couleur trouvée, se baser sur le message
+                result.isPassed = hasSuccessMessage;
+                result.headerColor = hasSuccessMessage ? COLOR_GREEN : COLOR_RED;
+            }
+            
+            // Extraire le message de résultat
+            if (result.isPassed) {
+                result.resultMessage = "Félicitations ! Vous avez réussi le quiz.";
+            } else {
+                result.resultMessage = "Vous n'avez pas atteint le score minimum requis pour réussir ce quiz.";
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'extraction des résultats: " + e.getMessage());
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Extrait le titre du quiz depuis le contenu HTML
+     */
+    private String extractTitle(String html) {
+        try {
+            // Différents patterns pour extraire le titre du quiz
+            String[] patterns = {
+                "Quiz\\s+([^<>:]+)\\s+pour",  // "Quiz [TITRE] pour"
+                "Résultats\\s+du\\s+quiz\\s+([^<>:]+)\\s+pour", // "Résultats du quiz [TITRE] pour"
+                "<h1[^>]*>.*?Quiz.*?[:-]\\s*([^<>:]+)</h1>",  // <h1>Quiz: [TITRE]</h1>
+                "<title>.*?Quiz.*?[:-]\\s*([^<>:]+)</title>",  // <title>Quiz: [TITRE]</title>
+                "Quiz\\s+d'admission\\s+-\\s+([^<>:]+)"        // "Quiz d'admission - [TITRE]"
+            };
+            
+            for (String patternStr : patterns) {
+                Pattern pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                Matcher matcher = pattern.matcher(html);
+                
+                if (matcher.find()) {
+                    String title = matcher.group(1).trim();
+                    return title;
+                }
+            }
+            
+            // Si encore pas trouvé, chercher simplement "Quiz d'admission"
+            if (html.contains("Quiz d'admission")) {
+                return "Quiz d'admission";
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'extraction du titre: " + e.getMessage());
+        }
+        
+        return "Quiz";
+    }

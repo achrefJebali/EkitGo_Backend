@@ -1,0 +1,284 @@
+    /**
+     * Crée un PDF à partir des informations extraites
+     */
+    private byte[] createPdf(String title, QuizResult quizResult, String questionsAndAnswers) {
+        try {
+            // Créer un document PDF
+            PDDocument document = new PDDocument();
+            
+            // Ajouter une page
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+            
+            // Créer un flux pour écrire sur la page
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            
+            // Configuration des polices et marges
+            PDType1Font titleFont = PDType1Font.HELVETICA_BOLD;
+            PDType1Font headerFont = PDType1Font.HELVETICA_BOLD;
+            PDType1Font normalFont = PDType1Font.HELVETICA;
+            PDType1Font boldFont = PDType1Font.HELVETICA_BOLD;
+            
+            float titleFontSize = 16;
+            float headerFontSize = 14;
+            float normalFontSize = 11;
+            float lineHeight = 15;
+            float margin = 50;
+            float width = page.getMediaBox().getWidth() - 2 * margin;
+            float startX = margin;
+            float y = page.getMediaBox().getHeight() - margin;
+            
+            // Dessiner l'en-tête coloré (comme dans l'email)
+            // Rectangle d'en-tête
+            contentStream.setNonStrokingColor(quizResult.headerColor[0], quizResult.headerColor[1], quizResult.headerColor[2]);
+            contentStream.addRect(margin - 20, y - 40, width + 40, 60);
+            contentStream.fill();
+            
+            // Écrire le titre principal en blanc sur l'en-tête coloré
+            contentStream.beginText();
+            contentStream.setFont(titleFont, titleFontSize);
+            contentStream.setNonStrokingColor(COLOR_WHITE[0], COLOR_WHITE[1], COLOR_WHITE[2]);
+            contentStream.newLineAtOffset(margin, y - 25);
+            contentStream.showText("RÉSULTATS DU QUIZ");
+            contentStream.endText();
+            
+            // Réinitialiser la couleur au noir pour le reste du texte
+            contentStream.setNonStrokingColor(COLOR_BLACK[0], COLOR_BLACK[1], COLOR_BLACK[2]);
+            
+            // Position après l'en-tête
+            y -= 80;
+            
+            // Dessiner le titre du quiz
+            if (title != null && !title.isEmpty()) {
+                contentStream.beginText();
+                contentStream.setFont(boldFont, normalFontSize);
+                contentStream.newLineAtOffset(startX, y);
+                contentStream.showText("Quiz: " + title);
+                contentStream.endText();
+                y -= lineHeight * 1.5f;
+            }
+            
+            // Afficher la date
+            contentStream.beginText();
+            contentStream.setFont(normalFont, normalFontSize);
+            contentStream.newLineAtOffset(startX, y);
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            contentStream.showText("Date: " + now.format(formatter));
+            contentStream.endText();
+            y -= lineHeight * 1.5f;
+            
+            // Afficher le score
+            if (quizResult.score != null && !quizResult.score.equals("Score non disponible")) {
+                contentStream.beginText();
+                contentStream.setFont(boldFont, normalFontSize + 1);
+                contentStream.newLineAtOffset(startX, y);
+                contentStream.showText("Votre score: " + quizResult.score);
+                contentStream.endText();
+                y -= lineHeight;
+            }
+            
+            // Afficher le message de résultat
+            if (quizResult.resultMessage != null && !quizResult.resultMessage.isEmpty()) {
+                contentStream.beginText();
+                // Utiliser la couleur verte ou rouge selon le résultat
+                contentStream.setNonStrokingColor(quizResult.headerColor[0], quizResult.headerColor[1], quizResult.headerColor[2]);
+                contentStream.setFont(boldFont, normalFontSize);
+                contentStream.newLineAtOffset(startX, y);
+                contentStream.showText(quizResult.resultMessage);
+                contentStream.endText();
+                // Réinitialiser la couleur
+                contentStream.setNonStrokingColor(COLOR_BLACK[0], COLOR_BLACK[1], COLOR_BLACK[2]);
+                y -= lineHeight * 2;
+            }
+            
+            // Dessiner une ligne de séparation
+            contentStream.setLineWidth(1);
+            contentStream.moveTo(startX, y + 5);
+            contentStream.lineTo(page.getMediaBox().getWidth() - margin, y + 5);
+            contentStream.stroke();
+            y -= lineHeight;
+            
+            // Titre de la section des questions
+            contentStream.beginText();
+            contentStream.setFont(headerFont, headerFontSize);
+            contentStream.newLineAtOffset(startX, y);
+            contentStream.showText("DÉTAIL DES QUESTIONS ET RÉPONSES");
+            contentStream.endText();
+            y -= lineHeight * 2;
+            
+            // Analyser le contenu des questions et réponses
+            String[] lines = questionsAndAnswers.split("\n");
+            
+            for (String line : lines) {
+                // Si on va déborder de la page, créer une nouvelle page
+                if (y < margin + 20) {
+                    contentStream.close();
+                    page = new PDPage(PDRectangle.A4);
+                    document.addPage(page);
+                    contentStream = new PDPageContentStream(document, page);
+                    y = page.getMediaBox().getHeight() - margin;
+                }
+                
+                // Déterminer le style à appliquer
+                boolean isQuestionHeader = line.startsWith("Question ");
+                boolean isCorrectAnswer = line.contains("[EMOJI_CHECK]");
+                boolean isIncorrectAnswer = line.contains("[EMOJI_CROSS]");
+                boolean isSeparator = line.startsWith("-----");
+                
+                // Traitement des séparateurs
+                if (isSeparator) {
+                    contentStream.setLineWidth(0.5f);
+                    contentStream.moveTo(startX, y);
+                    contentStream.lineTo(startX + width, y);
+                    contentStream.stroke();
+                    y -= lineHeight;
+                    continue;
+                }
+                
+                // Appliquer le style approprié
+                float xPosition = startX;
+                PDType1Font font = normalFont;
+                
+                if (isQuestionHeader) {
+                    font = boldFont;
+                    y -= 5; // Espace supplémentaire avant les questions
+                } else if (line.startsWith("-") || isCorrectAnswer || isIncorrectAnswer) {
+                    xPosition = startX + 15; // Indenter les réponses
+                }
+                
+                // Colorier les réponses correctes/incorrectes
+                contentStream.beginText();
+                
+                if (isCorrectAnswer) {
+                    contentStream.setNonStrokingColor(COLOR_GREEN[0], COLOR_GREEN[1], COLOR_GREEN[2]);
+                    xPosition = startX; // Annuler l'indentation pour les réponses avec emoji
+                    
+                    // Dessiner un petit carré vert pour les bonnes réponses
+                    contentStream.endText();
+                    contentStream.setNonStrokingColor(COLOR_GREEN[0], COLOR_GREEN[1], COLOR_GREEN[2]);
+                    contentStream.addRect(startX, y - 3, 10, 10);
+                    contentStream.fill();
+                    contentStream.setNonStrokingColor(COLOR_GREEN[0], COLOR_GREEN[1], COLOR_GREEN[2]);
+                    contentStream.beginText();
+                    
+                    // Nettoyer le texte pour affichage
+                    line = line.replace("[EMOJI_CHECK]", "").trim();
+                    xPosition = startX + 15;
+                } else if (isIncorrectAnswer) {
+                    contentStream.setNonStrokingColor(COLOR_RED[0], COLOR_RED[1], COLOR_RED[2]);
+                    xPosition = startX; // Annuler l'indentation pour les réponses avec emoji
+                    
+                    // Dessiner un petit carré rouge pour les mauvaises réponses
+                    contentStream.endText();
+                    contentStream.setNonStrokingColor(COLOR_RED[0], COLOR_RED[1], COLOR_RED[2]);
+                    contentStream.addRect(startX, y - 3, 10, 10);
+                    contentStream.fill();
+                    contentStream.setNonStrokingColor(COLOR_RED[0], COLOR_RED[1], COLOR_RED[2]);
+                    contentStream.beginText();
+                    
+                    // Nettoyer le texte pour affichage
+                    line = line.replace("[EMOJI_CROSS]", "").trim();
+                    xPosition = startX + 15;
+                } else {
+                    contentStream.setNonStrokingColor(COLOR_BLACK[0], COLOR_BLACK[1], COLOR_BLACK[2]);
+                }
+                
+                contentStream.setFont(font, normalFontSize);
+                contentStream.newLineAtOffset(xPosition, y);
+                contentStream.showText(line);
+                contentStream.endText();
+                
+                // Réinitialiser la couleur au noir
+                contentStream.setNonStrokingColor(COLOR_BLACK[0], COLOR_BLACK[1], COLOR_BLACK[2]);
+                
+                y -= lineHeight;
+            }
+            
+            // Pied de page
+            y = margin + 20;
+            contentStream.beginText();
+            contentStream.setFont(normalFont, 9);
+            contentStream.newLineAtOffset(page.getMediaBox().getWidth() / 2 - 110, y);
+            contentStream.showText("Ce rapport a été généré automatiquement par ElitGo");
+            contentStream.endText();
+            
+            // Fermer le flux et sauvegarder le document
+            contentStream.close();
+            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            document.save(baos);
+            document.close();
+            
+            return baos.toByteArray();
+            
+        } catch (IOException e) {
+            System.err.println("Erreur lors de la création du PDF: " + e.getMessage());
+            e.printStackTrace();
+            return createErrorPdf("Erreur de création PDF: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Crée un PDF d'erreur simple
+     */
+    private byte[] createErrorPdf(String errorMessage) {
+        try {
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+            
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            
+            // Titre
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
+            contentStream.newLineAtOffset(100, 700);
+            contentStream.showText("Erreur lors de la génération du PDF");
+            contentStream.endText();
+            
+            // Message d'erreur
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            contentStream.newLineAtOffset(100, 670);
+            contentStream.showText("Un problème est survenu lors de la génération du rapport.");
+            contentStream.endText();
+            
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            contentStream.newLineAtOffset(100, 650);
+            contentStream.showText("Veuillez consulter l'email pour voir les résultats du quiz.");
+            contentStream.endText();
+            
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.HELVETICA_OBLIQUE, 10);
+                contentStream.newLineAtOffset(100, 620);
+                contentStream.showText("Détail de l'erreur: " + 
+                                   (errorMessage.length() > 80 ? errorMessage.substring(0, 77) + "..." : errorMessage));
+                contentStream.endText();
+            }
+            
+            contentStream.close();
+            
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            document.save(baos);
+            document.close();
+            
+            return baos.toByteArray();
+            
+        } catch (IOException e) {
+            System.err.println("Erreur lors de la création du PDF d'erreur: " + e.getMessage());
+            e.printStackTrace();
+            return "Erreur PDF".getBytes(StandardCharsets.UTF_8);
+        }
+    }
+    
+    /**
+     * Vérifie si la génération de PDF est activée
+     * @return true car cette implémentation est prête à l'emploi
+     */
+    public boolean isPdfGenerationEnabled() {
+        return true;
+    }
+}

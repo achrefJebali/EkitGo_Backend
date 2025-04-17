@@ -1,0 +1,82 @@
+package tn.esprit.examenspring.services.pdf;
+
+import org.springframework.stereotype.Service;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+/**
+ * Service pour générer des rapports PDF à partir de contenu HTML
+ * Cette implémentation utilise Apache PDFBox pour une meilleure mise en forme
+ */
+@Service
+public class PdfGeneratorService {
+
+    // Couleurs pour le PDF
+    private static final float[] COLOR_GREEN = new float[]{0.18f, 0.8f, 0.44f}; // #2ecc71
+    private static final float[] COLOR_RED = new float[]{0.9f, 0.3f, 0.24f};    // #e74c3c
+    private static final float[] COLOR_BLUE = new float[]{0.2f, 0.6f, 0.86f};   // #3498db
+    private static final float[] COLOR_BLACK = new float[]{0, 0, 0};
+    private static final float[] COLOR_WHITE = new float[]{1, 1, 1};
+
+    /**
+     * Génère un rapport PDF à partir du contenu HTML
+     * 
+     * @param htmlContent Le contenu HTML à convertir
+     * @return Un tableau de bytes contenant le rapport PDF
+     */
+    public byte[] generatePdfFromHtml(String htmlContent) {
+        System.out.println("Génération d'un PDF des résultats du quiz avec PDFBox...");
+        
+        try {
+            // Nettoyer le HTML de manière agressive pour retirer tout le formattage problématique
+            String cleanedHtml = htmlContent;
+            
+            // Remplacer d'abord les emojis par des marqueurs spéciaux
+            cleanedHtml = cleanedHtml.replace("✅", "EMOJI_CHECK")
+                                .replace("❌", "EMOJI_CROSS")
+                                .replace("&#9989;", "EMOJI_CHECK")
+                                .replace("&#10060;", "EMOJI_CROSS");
+            
+            // Ensuite, remplacer tous les styles et scripts
+            cleanedHtml = cleanedHtml.replaceAll("<script[^>]*>.*?</script>", "");
+            cleanedHtml = cleanedHtml.replaceAll("<style[^>]*>.*?</style>", "");
+            
+            // Extraire les informations importantes du HTML
+            String title = extractTitle(cleanedHtml);
+            QuizResult quizResult = extractQuizResult(cleanedHtml);
+            
+            // Extraire les questions et réponses
+            String questionsAndAnswers = extractQuestionsAndAnswers(cleanedHtml);
+            
+            // Générer le PDF avec les données extraites
+            return createPdf(title, quizResult, questionsAndAnswers);
+            
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la génération du PDF: " + e.getMessage());
+            e.printStackTrace();
+            // Générer un PDF d'erreur en cas de problème
+            return createErrorPdf(e.getMessage());
+        }
+    }
+
+    /**
+     * Classe interne pour stocker les informations du quiz
+     */
+    private static class QuizResult {
+        String score = "Score non disponible";
+        float[] headerColor = COLOR_BLUE; // Couleur par défaut
+        boolean isPassed = false;
+        String resultMessage = "";
+    }

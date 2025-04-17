@@ -1,0 +1,114 @@
+    /**
+     * Extrait les questions et réponses du contenu HTML
+     */
+    private String extractQuestionsAndAnswers(String html) {
+        StringBuilder result = new StringBuilder();
+        
+        try {
+            // Trouver la section des questions
+            int startIndex = html.indexOf("DÉTAIL DES QUESTIONS");
+            if (startIndex == -1) {
+                startIndex = html.indexOf("Détail des questions");
+            }
+            
+            if (startIndex == -1) {
+                return "Aucune question trouvée.";
+            }
+            
+            // Extraire la section des questions
+            String questionsSection = html.substring(startIndex);
+            
+            // Remplacer les émoticônes par des marqueurs
+            questionsSection = questionsSection
+                    .replace("✅", "EMOJI_CHECK")
+                    .replace("❌", "EMOJI_CROSS")
+                    .replace("&#9989;", "EMOJI_CHECK")
+                    .replace("&#10060;", "EMOJI_CROSS");
+            
+            // Extraire chaque question et ses réponses
+            Pattern questionPattern = Pattern.compile("<div[^>]*>\\s*<h3[^>]*>([^<]+)</h3>\\s*<ul[^>]*>(.*?)</ul>\\s*</div>", 
+                                                   Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+            Matcher questionMatcher = questionPattern.matcher(questionsSection);
+            
+            int questionNumber = 1;
+            
+            while (questionMatcher.find()) {
+                String questionText = questionMatcher.group(1).trim();
+                String answersHtml = questionMatcher.group(2);
+                
+                // Ajouter la question au résultat
+                result.append("Question ").append(questionNumber++).append(": ").append(questionText).append("\n\n");
+                
+                // Extraire les réponses
+                Pattern answerPattern = Pattern.compile("<li[^>]*>(.*?)</li>", Pattern.DOTALL);
+                Matcher answerMatcher = answerPattern.matcher(answersHtml);
+                
+                while (answerMatcher.find()) {
+                    String answerHtml = answerMatcher.group(1);
+                    boolean isCorrect = answerHtml.contains("EMOJI_CHECK") || 
+                                       (answerHtml.contains("color: green") || answerHtml.contains("color:#2ecc71"));
+                    boolean isIncorrect = answerHtml.contains("EMOJI_CROSS") || 
+                                         (answerHtml.contains("color: red") || answerHtml.contains("color:#e74c3c"));
+                    
+                    // Nettoyer le texte de la réponse
+                    String answerText = answerHtml
+                            .replaceAll("<[^>]*>", "")
+                            .replace("EMOJI_CHECK", "")
+                            .replace("EMOJI_CROSS", "")
+                            .trim();
+                    
+                    // Ajouter la réponse au résultat
+                    if (isCorrect) {
+                        result.append("[EMOJI_CHECK] ").append(answerText).append("\n");
+                    } else if (isIncorrect) {
+                        result.append("[EMOJI_CROSS] ").append(answerText).append("\n");
+                    } else {
+                        result.append("- ").append(answerText).append("\n");
+                    }
+                }
+                
+                result.append("\n---------------------------------------\n\n");
+            }
+            
+            // Si aucune question n'a été trouvée avec cette méthode, utiliser une approche alternative
+            if (questionNumber == 1) {
+                // Approche alternative basée sur le texte
+                Pattern altPattern = Pattern.compile("(Question\\s+\\d+[^\\n]+)\\n(.*?)(?=\\n(?:Question\\s+\\d+|$))", 
+                                                  Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+                Matcher altMatcher = altPattern.matcher(questionsSection);
+                
+                while (altMatcher.find()) {
+                    String question = altMatcher.group(1).trim();
+                    String answerBlock = altMatcher.group(2).trim();
+                    
+                    result.append(question).append("\n\n");
+                    
+                    // Extraire les réponses
+                    String[] answerLines = answerBlock.split("\\n");
+                    for (String line : answerLines) {
+                        line = line.trim();
+                        if (!line.isEmpty()) {
+                            if (line.contains("EMOJI_CHECK")) {
+                                result.append("[EMOJI_CHECK] ").append(line.replace("EMOJI_CHECK", "").trim()).append("\n");
+                            } else if (line.contains("EMOJI_CROSS")) {
+                                result.append("[EMOJI_CROSS] ").append(line.replace("EMOJI_CROSS", "").trim()).append("\n");
+                            } else if (line.startsWith("-")) {
+                                result.append(line).append("\n");
+                            } else if (!line.startsWith("---")) {
+                                result.append("- ").append(line).append("\n");
+                            }
+                        }
+                    }
+                    
+                    result.append("\n---------------------------------------\n\n");
+                }
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'extraction des questions et réponses: " + e.getMessage());
+            e.printStackTrace();
+            result.append("Erreur lors de l'extraction des questions et réponses.\n");
+        }
+        
+        return result.toString();
+    }
