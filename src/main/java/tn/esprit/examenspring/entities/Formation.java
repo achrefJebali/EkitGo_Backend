@@ -1,10 +1,11 @@
 package tn.esprit.examenspring.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Data
@@ -20,37 +21,38 @@ public class Formation {
     private String image;
     private String title;
     private String description;
-    private String video;
     private String label;
     private String duration;
-    private String certificate;
     private Float price;
     private Integer discount;
-    private String featured;
-    private String highestRated;
-    private String progression;
+    private Float discountedPrice;
+    private Boolean featured;
+    private Boolean highestRated;
     /////REVIEW//////
     @OneToMany(cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<Review> reviews;
     /////CATEGORY//////
-    @ManyToOne
+    @Getter
+    @Setter
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     @JsonIgnore
     Category category;
-    /////RESSOURCE//////
-    @ManyToOne
-    @ToString.Exclude
+
+    /////RESSOURCES//////
+    @OneToMany(cascade= CascadeType.ALL, mappedBy="formation")
+
     @JsonIgnore
-    Ressource ressource;
+    private List<Ressource> ressources;
     /////USER////
     @ManyToMany(mappedBy="formations",cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Set<User>users;
     ////QUIZ////
-    @OneToOne
+    @OneToOne(mappedBy="formation",cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonIgnore
     private Quiz quiz;

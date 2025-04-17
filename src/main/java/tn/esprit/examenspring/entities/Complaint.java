@@ -22,10 +22,13 @@ public class Complaint {
     private Status status;
     private Date submissiondate;
 
-    @JsonIgnore
 
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     User user;
     @OneToOne
+    @ToString.Exclude
+    @JsonIgnore
     private ComplaintResponse complaintResponse;
 }

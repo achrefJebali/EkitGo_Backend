@@ -24,17 +24,22 @@ public class Announcment {
     private String postdesc;
     private Date creatdate;
 
-    @JsonIgnore
 
 
     @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Feedback> feedbacks;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Comment> comments;
 
     ////USER////
     @ManyToMany(cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set <User>users;
 
 }

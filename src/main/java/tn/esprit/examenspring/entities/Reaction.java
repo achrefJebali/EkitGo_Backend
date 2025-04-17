@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,11 @@ public class Reaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
     @Enumerated(EnumType.STRING)
-    public Emoji emoji;
-    public Date date;
+    private Emoji emoji;
+    private Date date;
 
+    @OneToOne (mappedBy="reaction")
+    @ToString.Exclude
+    @JsonIgnore
+    private Message message;
 }

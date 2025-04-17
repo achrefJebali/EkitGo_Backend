@@ -195,4 +195,35 @@ public class EmailService {
             return false;
         }
     }
+
+    /**
+     * Sends a purchase confirmation email to the user
+     * @param to The recipient's email address
+     * @param studentName The student's name
+     * @param formationName The formation name
+     */
+    public void sendPurchaseConfirmation(String to, String studentName, String formationName) {
+        if (to == null || to.isEmpty()) {
+            log.error("Cannot send purchase confirmation: recipient email is missing");
+            return;
+        }
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject("Purchase Confirmation - ElitGo");
+            String content = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;'>" +
+                    "<h2 style='color: #333366;'>Thank you for your purchase, " + studentName + "!</h2>" +
+                    "<p>You have successfully enrolled in the formation: <b>" + formationName + "</b>.</p>" +
+                    "<p>If you have any questions, please contact us at support@elitgo.com.</p>" +
+                    "<p>Best regards,<br>The ElitGo Team</p>" +
+                    "</div>";
+            helper.setText(content, true);
+            mailSender.send(message);
+            log.info("✓✓✓ Purchase confirmation email sent to: {}", to);
+        } catch (Exception e) {
+            log.error("Failed to send purchase confirmation email to {}: {}", to, e.getMessage());
+        }
+    }
 }

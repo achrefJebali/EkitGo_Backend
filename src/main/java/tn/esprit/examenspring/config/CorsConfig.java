@@ -64,7 +64,7 @@ public class CorsConfig implements WebMvcConfigurer {
         // Apply this configuration to all paths
         source.registerCorsConfiguration("/**", config);
         source.registerCorsConfiguration("/User/**", config); // Explicitly add for User endpoints
-      source.registerCorsConfiguration("/Interview/**", config);
+        source.registerCorsConfiguration("/Interview/**", config);
 
         return new CorsFilter(source);
     }

@@ -6,7 +6,7 @@ import lombok.*;
 
 @Getter
 
- main
+
 public enum Emoji {
 
 }

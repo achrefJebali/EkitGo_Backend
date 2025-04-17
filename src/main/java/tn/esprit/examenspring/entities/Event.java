@@ -29,6 +29,8 @@ public class Event {
     private Date eventDate;
     //////PLANNING/////
     @OneToOne
+    @ToString.Exclude
+    @JsonIgnore
     private Planning planning;
     //////CONTRIBUTION//////
     @OneToMany(cascade = CascadeType.ALL)

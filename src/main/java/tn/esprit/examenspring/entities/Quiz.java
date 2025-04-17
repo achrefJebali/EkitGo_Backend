@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,8 @@ import java.util.Set;
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idQuiz;
+    @Column(name = "idQuiz")
+    private Integer id;
     private String title;
     private String description;
     private Float duration;
@@ -23,10 +25,22 @@ public class Quiz {
     private String categorie ;
     /////QUESTION//////
     @OneToMany(cascade= CascadeType.ALL, mappedBy="quiz")
+    @ToString.Exclude
+    @JsonIgnore
     private Set<Question> questions ;
     /////QUIZSCORE//////
     @OneToMany(mappedBy="quiz",cascade= CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
     private Set<QuizScore>quizScores;
-
-
+    /////TRICHEDETECTION//////
+    @OneToMany(mappedBy="quiz",cascade= CascadeType.ALL)
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<TricheDetection>tricheDetections;
+    /////FORMATION///
+    @OneToOne(fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @JsonIgnore
+    private Formation formation;
 }

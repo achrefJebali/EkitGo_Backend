@@ -22,10 +22,12 @@ public class Assignment {
     private String description;
     private Date dueDate;
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<Submission> submissions;
+    @ToString.Exclude
     @JsonIgnore
+    private Set<Submission> submissions;
 
     @ManyToOne
+    @ToString.Exclude
+    @JsonIgnore
     Course course;
 }
-

@@ -1,5 +1,6 @@
 package tn.esprit.examenspring.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,5 +22,8 @@ public class Schedule {
     private LocalTime startTime;
     private LocalTime endTime;
 
-
+    @OneToMany(cascade= CascadeType.ALL, mappedBy="schedule")
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<Classes> classes;
 }
